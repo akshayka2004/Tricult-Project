@@ -1,0 +1,552 @@
+/* ========================================
+   CONFIRM RECHARGE MODAL - REFINED
+   ======================================== */
+
+/* Modal Overlay - Darker for focus */
+.modal-overlay-recharge {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease;
+}
+
+/* Main Modal Card */
+.recharge-modal {
+    width: 100%;
+    max-width: 420px;
+    background: linear-gradient(145deg, rgba(15, 15, 15, 0.98), rgba(8, 8, 8, 0.99));
+    border: 1.5px solid rgba(255, 255, 0, 0.25);
+    border-radius: 24px;
+    padding: 0;
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.8),
+        0 0 0 1px rgba(255, 255, 0, 0.1),
+        0 0 60px rgba(255, 255, 0, 0.1);
+    animation: modalSlideUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+    position: relative;
+}
+
+/* Top accent line */
+.recharge-modal::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, transparent, #ffff00, #ffcc00, transparent);
+    opacity: 0.8;
+}
+
+/* Modal Header */
+.recharge-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 28px 20px;
+    border-bottom: 1px solid rgba(255, 255, 0, 0.1);
+}
+
+.recharge-modal-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffff00;
+}
+
+.recharge-modal-title .icon {
+    width: 36px;
+    height: 36px;
+    background: linear-gradient(135deg, rgba(255, 255, 0, 0.15), rgba(255, 204, 0, 0.1));
+    border: 1.5px solid rgba(255, 255, 0, 0.3);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.25rem;
+    box-shadow: 0 0 20px rgba(255, 255, 0, 0.15);
+}
+
+.recharge-modal-close {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.03);
+    color: #666666;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    font-size: 1.25rem;
+}
+
+.recharge-modal-close:hover {
+    background: rgba(255, 51, 102, 0.15);
+    color: #ff3366;
+    border-color: rgba(255, 51, 102, 0.3);
+    transform: rotate(90deg);
+}
+
+/* Modal Body */
+.recharge-modal-body {
+    padding: 28px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+}
+
+/* User Info Card */
+.recharge-user-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px;
+    background: linear-gradient(135deg, rgba(255, 255, 0, 0.05), rgba(255, 204, 0, 0.03));
+    border: 1.5px solid rgba(255, 255, 0, 0.15);
+    border-radius: 16px;
+    position: relative;
+    overflow: hidden;
+}
+
+.recharge-user-card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #ffff00, #ffcc00);
+}
+
+.recharge-user-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(255, 255, 0, 0.2), rgba(255, 204, 0, 0.1));
+    border: 2px solid rgba(255, 255, 0, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    flex-shrink: 0;
+    box-shadow: 0 4px 15px rgba(255, 255, 0, 0.1);
+}
+
+.recharge-user-details {
+    flex: 1;
+    min-width: 0;
+}
+
+.recharge-user-name {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: #ffff00;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.recharge-user-id {
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 0.875rem;
+    color: #888844;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.recharge-user-id::before {
+    content: 'ID:';
+    color: #555555;
+}
+
+/* Current Balance Display */
+.recharge-current-balance {
+    text-align: center;
+    padding: 20px;
+    background: rgba(10, 10, 10, 0.6);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.recharge-balance-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #666666;
+    margin-bottom: 8px;
+}
+
+.recharge-balance-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 800;
+    color: #ffff00;
+    text-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
+}
+
+.recharge-balance-suffix {
+    font-size: 0.875rem;
+    color: #888844;
+    margin-left: 4px;
+}
+
+/* Amount Input Section */
+.recharge-amount-section {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.recharge-amount-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #888844;
+    text-align: center;
+}
+
+.recharge-amount-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.recharge-amount-input {
+    width: 100%;
+    padding: 20px 24px;
+    padding-left: 48px;
+    background: rgba(10, 10, 10, 0.8);
+    border: 2px solid rgba(255, 255, 0, 0.2);
+    border-radius: 16px;
+    color: #ffff00;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    text-align: center;
+    outline: none;
+    transition: all 0.3s ease;
+}
+
+.recharge-amount-input:focus {
+    border-color: rgba(255, 255, 0, 0.5);
+    box-shadow:
+        0 0 0 4px rgba(255, 255, 0, 0.1),
+        0 0 30px rgba(255, 255, 0, 0.15);
+    background: rgba(10, 10, 10, 0.95);
+}
+
+.recharge-amount-input::placeholder {
+    color: #333333;
+}
+
+.recharge-amount-prefix {
+    position: absolute;
+    left: 20px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #888844;
+    pointer-events: none;
+}
+
+/* Quick Amount Buttons */
+.recharge-quick-amounts {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.quick-amount-btn {
+    padding: 12px 8px;
+    background: rgba(255, 255, 0, 0.05);
+    border: 1.5px solid rgba(255, 255, 0, 0.15);
+    border-radius: 10px;
+    color: #888844;
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.quick-amount-btn:hover {
+    background: rgba(255, 255, 0, 0.1);
+    border-color: rgba(255, 255, 0, 0.3);
+    color: #ffff00;
+    transform: translateY(-2px);
+}
+
+.quick-amount-btn.active {
+    background: rgba(255, 255, 0, 0.2);
+    border-color: #ffff00;
+    color: #ffff00;
+    box-shadow: 0 4px 15px rgba(255, 255, 0, 0.2);
+}
+
+/* Summary Section */
+.recharge-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    padding: 20px;
+    background: rgba(10, 10, 10, 0.6);
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 0, 0.1);
+}
+
+.recharge-summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.9375rem;
+}
+
+.recharge-summary-label {
+    color: #666666;
+    font-weight: 500;
+}
+
+.recharge-summary-value {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 600;
+    color: #e0e0e0;
+}
+
+.recharge-summary-value.positive {
+    color: #ccff00;
+}
+
+.recharge-summary-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 0, 0.2), transparent);
+    margin: 4px 0;
+}
+
+.recharge-summary-total {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 8px;
+}
+
+.recharge-total-label {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #ffff00;
+}
+
+.recharge-total-value {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #ffff00;
+    text-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
+}
+
+/* Modal Footer / Actions */
+.recharge-modal-footer {
+    display: flex;
+    gap: 12px;
+    padding: 24px 28px 28px;
+    background: linear-gradient(180deg, transparent, rgba(255, 255, 0, 0.03));
+    border-top: 1px solid rgba(255, 255, 0, 0.1);
+}
+
+.recharge-btn {
+    flex: 1;
+    padding: 16px 24px;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.recharge-btn-cancel {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    color: #888888;
+}
+
+.recharge-btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 255, 255, 0.2);
+    color: #e0e0e0;
+}
+
+.recharge-btn-confirm {
+    background: linear-gradient(135deg, #ffff00, #ffcc00);
+    color: #000000;
+    box-shadow: 0 4px 20px rgba(255, 255, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.recharge-btn-confirm::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.recharge-btn-confirm:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 30px rgba(255, 255, 0, 0.5);
+}
+
+.recharge-btn-confirm:hover::before {
+    left: 100%;
+}
+
+.recharge-btn-confirm:active {
+    transform: translateY(0);
+}
+
+.recharge-btn-confirm:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* Success Animation Overlay */
+.recharge-success-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    animation: fadeIn 0.3s ease;
+    z-index: 10;
+}
+
+.recharge-success-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #ccff00, #99cc00);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 2.5rem;
+    color: #000000;
+    box-shadow: 0 0 40px rgba(204, 255, 0, 0.4);
+    animation: successPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.recharge-success-text {
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #ccff00;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    animation: fadeInUp 0.4s ease 0.2s both;
+}
+
+/* Animations */
+@keyframes modalSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+@keyframes successPop {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.1);
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 480px) {
+    .recharge-modal {
+        margin: 10px;
+        max-width: calc(100% - 20px);
+    }
+
+    .recharge-modal-header,
+    .recharge-modal-body,
+    .recharge-modal-footer {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+
+    .recharge-amount-input {
+        font-size: 1.5rem;
+        padding: 16px 20px;
+        padding-left: 40px;
+    }
+
+    .recharge-quick-amounts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .recharge-btn {
+        padding: 14px 16px;
+        font-size: 0.75rem;
+    }
+}
