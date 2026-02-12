@@ -201,12 +201,12 @@ export default function AdminDashboard() {
     return (
         <div className="admin-container">
             {/* ── Header ── */}
-            <header className="admin-header flex-col h-auto py-4 gap-2">
-                <div className="admin-brand flex-col">
+            <header className="admin-header" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: '16px 24px', position: 'relative' }}>
+                <div className="admin-brand" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
                     <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain mb-2 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
                     <h1 className="admin-title text-lg sm:text-2xl">ADMIN PANEL</h1>
                 </div>
-                <button onClick={handleLogout} className="admin-exit-btn absolute top-4 right-6">
+                <button onClick={handleLogout} className="admin-exit-btn" style={{ position: 'absolute', top: '16px', right: '16px' }}>
                     <LogOut className="w-4 h-4" />
                     EXIT
                 </button>
