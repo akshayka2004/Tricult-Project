@@ -187,6 +187,48 @@ export default function AdminDashboard() {
         }
     };
 
+    // ─── Add Volunteer ───
+    const [newVolunteerName, setNewVolunteerName] = useState('');
+    const [addingVolunteer, setAddingVolunteer] = useState(false);
+    const [createdVolunteer, setCreatedVolunteer] = useState(null);
+
+    const handleAddVolunteer = async (e) => {
+        e.preventDefault();
+        setAddingVolunteer(true);
+        setCreatedVolunteer(null);
+
+        try {
+            // Generate VOL-XXXX
+            const randomSuffix = String(Math.floor(Math.random() * 10000)).padStart(4, '0');
+            const ticketNumber = `VOL-${randomSuffix}`;
+            const password = ticketNumber; // Password same as ticket
+            const hashedPassword = bcrypt.hashSync(password, 10);
+
+            const { data: profile, error } = await supabase.from('profiles').insert({
+                username: newVolunteerName.trim(),
+                password: hashedPassword,
+                ticket_number: ticketNumber,
+                balance_tokens: 0,
+                is_volunteer: true,
+                is_admin: false,
+            }).select().single();
+
+            if (error) throw error;
+
+            setCreatedVolunteer({
+                username: profile.username,
+                ticket: ticketNumber,
+                password: ticketNumber
+            });
+            showMessage(`Volunteer "${profile.username}" added! Credentials generated.`);
+            setNewVolunteerName('');
+        } catch (err) {
+            showMessage(err.message || 'Failed to add volunteer', 'error');
+        } finally {
+            setAddingVolunteer(false);
+        }
+    };
+
     const handleLogout = () => {
         logout();
         navigate('/admin-portal-secure');
@@ -195,6 +237,7 @@ export default function AdminDashboard() {
     const tabs = [
         { id: 'addUser', label: 'ADD USER', icon: UserPlus },
         { id: 'recharge', label: 'RECHARGE', icon: Coins },
+        { id: 'addVolunteer', label: 'ADD VOL', icon: Shield },
         { id: 'users', label: 'ALL USERS', icon: Users },
     ];
 
@@ -332,6 +375,90 @@ export default function AdminDashboard() {
                                         <>
                                             <UserPlus className="w-5 h-5 btn-icon" />
                                             CREATE USER
+                                        </>
+                                    )}
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                )}
+
+                {/* ═══ ADD VOLUNTEER TAB ═══ */}
+                {activeTab === 'addVolunteer' && (
+                    <div className="admin-form-card">
+                        <h3 className="form-title">
+                            <Shield className="w-5 h-5" />
+                            ADD NEW VOLUNTEER
+                        </h3>
+
+                        {/* Volunteer Created Success Card */}
+                        {createdVolunteer && (
+                            <div className="alert-success" style={{ marginBottom: '28px', flexDirection: 'column', alignItems: 'stretch', gap: '12px' }}>
+                                <p style={{ fontSize: '0.6875rem', fontWeight: 700, letterSpacing: '2px', textTransform: 'uppercase', color: '#8888aa' }}>
+                                    Generated Credentials
+                                </p>
+                                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '16px' }}>
+                                    <div className="flex flex-col">
+                                        <span style={{ fontFamily: "'Orbitron', sans-serif", fontSize: '1.25rem', color: '#ccff00', fontWeight: 900, letterSpacing: '2px' }}>
+                                            {createdVolunteer.ticket}
+                                        </span>
+                                        <span style={{ fontSize: '0.75rem', color: 'rgba(255,255,255,0.5)', fontFamily: "'Rajdhani', sans-serif" }}>
+                                            Password: {createdVolunteer.password}
+                                        </span>
+                                    </div>
+                                    <button
+                                        onClick={() => copyToClipboard(`Ticket: ${createdVolunteer.ticket}\nPassword: ${createdVolunteer.password}`)}
+                                        className="admin-exit-btn"
+                                        style={{ borderColor: 'rgba(204,255,0,0.3)', color: '#ccff00', background: 'rgba(204,255,0,0.1)', padding: '8px 14px' }}
+                                    >
+                                        {copiedTicket ? (
+                                            <><CheckCheck className="w-4 h-4" /> COPIED!</>
+                                        ) : (
+                                            <><Copy className="w-4 h-4" /> COPY</>
+                                        )}
+                                    </button>
+                                </div>
+                                <p style={{ fontSize: '0.75rem', color: 'rgba(136,136,170,0.6)' }}>
+                                    Share these credentials with the volunteer
+                                </p>
+                            </div>
+                        )}
+
+                        <form onSubmit={handleAddVolunteer}>
+                            <div className="form-group">
+                                <label className="form-label">
+                                    <User className="w-3.5 h-3.5" /> Volunteer Name
+                                </label>
+                                <div className="input-wrapper">
+                                    <Shield className="input-icon w-4 h-4 text-cyber-green" />
+                                    <input
+                                        type="text"
+                                        value={newVolunteerName}
+                                        onChange={(e) => setNewVolunteerName(e.target.value)}
+                                        placeholder="Volunteer Name"
+                                        className="admin-input"
+                                        required
+                                    />
+                                </div>
+                            </div>
+
+                            <div className="form-info" style={{ marginBottom: '24px' }}>
+                                <Lock className="w-4 h-4" style={{ color: '#ffff00', opacity: 0.6 }} />
+                                <span>Ticket & Password will be <strong>auto-generated</strong> (VOL-XXXX)</span>
+                            </div>
+
+                            <div className="form-actions">
+                                <button
+                                    type="submit"
+                                    disabled={addingVolunteer}
+                                    className="admin-submit-btn"
+                                >
+                                    {addingVolunteer ? (
+                                        <span style={{ animation: 'pulse 1.5s infinite' }}>ADDING...</span>
+                                    ) : (
+                                        <>
+                                            <UserPlus className="w-5 h-5 btn-icon" />
+                                            ADD VOLUNTEER
                                         </>
                                     )}
                                 </button>

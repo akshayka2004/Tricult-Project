@@ -3,15 +3,18 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import { TOTAL_HUBS, SESSION_DURATION_MS } from '../lib/constants';
-import { Eye, LogOut, Clock, User, Monitor, Wifi, WifiOff } from 'lucide-react';
+import { Eye, LogOut, Clock, User, Monitor, Wifi, WifiOff, Lock } from 'lucide-react';
 
 const HUB_STATUSES = { ACTIVE: 'active', EXPIRING: 'expiring', EXPIRED: 'expired', OPEN: 'open' };
 
+import ChangePasswordModal from '../components/ChangePasswordModal';
+
 export default function VolunteerDashboard() {
-    const { logout } = useAuth();
+    const { logout, user } = useAuth(); // Destructure user from useAuth
     const navigate = useNavigate();
     const [sessions, setSessions] = useState({});
     const [now, setNow] = useState(Date.now());
+    const [showPasswordModal, setShowPasswordModal] = useState(false);
 
     // Fetch active sessions
     const fetchSessions = useCallback(async () => {
@@ -91,6 +94,17 @@ export default function VolunteerDashboard() {
         <div className="min-h-screen flex flex-col" style={{ background: 'transparent' }}>
             {/* ── Header ── */}
             <header className="monitor-header" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
+
+                {/* Reset Password Button (Absolute Left) */}
+                <button
+                    onClick={() => setShowPasswordModal(true)}
+                    className="btn-base cyber-btn-outline btn-sm"
+                    style={{ position: 'absolute', top: '16px', left: '16px', padding: '0 16px', height: '36px', fontSize: '11px', fontWeight: 700 }}
+                >
+                    <Lock className="w-3 h-3 mr-2" />
+                    RESET PASSWORD
+                </button>
+
                 <div className="flex flex-col items-center gap-1">
                     <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
                     <h1 className="text-glow-green text-lg sm:text-2xl" style={{ color: '#ccff00' }}>HUB MONITOR</h1>

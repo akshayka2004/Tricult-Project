@@ -14,6 +14,7 @@ export default function UserDashboard() {
     const navigate = useNavigate();
     const [transactions, setTransactions] = useState([]);
     const [bill, setBill] = useState(null);
+    const [billType, setBillType] = useState('receipt'); // 'confirmation' | 'receipt'
     const [scanError, setScanError] = useState('');
     const [processing, setProcessing] = useState(false);
     const [activeTab, setActiveTab] = useState('history');
@@ -34,24 +35,50 @@ export default function UserDashboard() {
     }, [fetchTransactions]);
 
     const handleQRScan = async (decodedText) => {
+        if (processing || bill) return; // Prevent scan if processing or modal open
         setScanError('');
-        setProcessing(true);
 
         try {
-            const hubNumber = parseInt(decodedText.replace(/\D/g, ''), 10);
+            // Expected format: "HUB-1", "HUB-2", etc.
+            if (!decodedText.startsWith('HUB-')) {
+                throw new Error('Invalid QR Code. Please scan a valid Game Hub QR.');
+            }
+
+            const hubNumber = parseInt(decodedText.split('-')[1]);
             if (isNaN(hubNumber) || hubNumber < 1 || hubNumber > TOTAL_HUBS) {
-                setScanError(`Invalid hub QR code. Expected hub number 1-${TOTAL_HUBS}.`);
-                setProcessing(false);
-                return;
+                throw new Error('Invalid Hub Number.');
             }
 
             if (user.balance_tokens < TOKEN_COST_PER_PLAY) {
-                setScanError('Insufficient tokens! Please recharge.');
-                setProcessing(false);
-                return;
+                throw new Error(`Insufficient tokens. Need ${TOKEN_COST_PER_PLAY} TKN.`);
             }
 
+            // Open Confirmation Modal
+            setBill({
+                hub_number: hubNumber,
+                timestamp: null, // Pending
+                username: user.username,
+                ticket_number: user.ticket_number,
+                duration: SESSION_DURATION,
+                amount: TOKEN_COST_PER_PLAY,
+            });
+            setBillType('confirmation');
+
+        } catch (err) {
+            setScanError(err.message);
+            setTimeout(() => setScanError(''), 3000);
+        }
+    };
+
+    const confirmTransaction = async () => {
+        if (!bill || !user) return;
+        setProcessing(true);
+
+        try {
+            const timestamp = new Date().toISOString();
             const newBalance = user.balance_tokens - TOKEN_COST_PER_PLAY;
+
+            // 1. Deduct Tokens
             const { error: updateError } = await supabase
                 .from('profiles')
                 .update({ balance_tokens: newBalance })
@@ -59,25 +86,25 @@ export default function UserDashboard() {
 
             if (updateError) throw updateError;
 
-            const timestamp = new Date().toISOString();
+            // 2. Log Transaction
             const { error: txError } = await supabase
                 .from('transactions')
                 .insert({
                     user_id: user.id,
                     type: 'deduction',
                     amount: TOKEN_COST_PER_PLAY,
-                    hub_number: hubNumber,
+                    hub_number: bill.hub_number,
                     duration: SESSION_DURATION,
-                    description: `Hub #${hubNumber} session — ${SESSION_DURATION}`,
+                    description: `Hub #${bill.hub_number} session — ${SESSION_DURATION}`,
                     created_at: timestamp,
                 });
 
             if (txError) throw txError;
 
-            // Create a session record for the volunteer hub monitor
+            // 3. Create active session for volunteer
             const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
             await supabase.from('sessions').insert({
-                hub_number: hubNumber,
+                hub_number: bill.hub_number,
                 user_id: user.id,
                 username: user.username,
                 ticket_number: user.ticket_number,
@@ -87,19 +114,17 @@ export default function UserDashboard() {
                 expires_at: expiresAt,
             });
 
+            // Success
             await refreshUser();
             await fetchTransactions();
 
-            setBill({
-                hub_number: hubNumber,
-                timestamp,
-                username: user.username,
-                ticket_number: user.ticket_number,
-                duration: SESSION_DURATION,
-                amount: TOKEN_COST_PER_PLAY,
-            });
+            // Update modal to Receipt
+            setBill({ ...bill, timestamp });
+            setBillType('receipt');
+
         } catch (err) {
-            setScanError('Transaction failed. Please try again.');
+            setScanError(err.message || 'Transaction failed');
+            setBill(null); // Close modal on error
         } finally {
             setProcessing(false);
         }
@@ -144,15 +169,16 @@ export default function UserDashboard() {
                 >
                     <User className="w-8 h-8" />
                 </div>
-                <div className="user-info">
-                    <h2 className="user-name">{user?.username}</h2>
-                    <p className="user-id">{user?.ticket_number}</p>
+                <div className="flex flex-col items-end">
+                    <p className="font-['Orbitron'] text-xl font-bold text-white tracking-wider">{user?.username}</p>
+                    <p className="text-cyber-muted text-sm font-['Share_Tech_Mono']">{user?.ticket_number}</p>
                 </div>
                 <button
                     onClick={() => setShowPasswordModal(true)}
-                    className="ml-auto p-2 rounded-full hover:bg-[rgba(255,255,0,0.1)] text-[#ffff00]/60 hover:text-[#ffff00] transition-colors"
+                    className="ml-auto px-3 py-1.5 rounded-lg border border-cyber-yellow/30 bg-cyber-yellow/10 hover:bg-cyber-yellow/20 text-cyber-yellow text-xs font-['Orbitron'] font-bold tracking-wider transition-all flex items-center gap-2"
                 >
-                    <Lock className="w-5 h-5" />
+                    <Lock className="w-3 h-3" />
+                    RESET PASSWORD
                 </button>
             </div>
 
@@ -239,7 +265,16 @@ export default function UserDashboard() {
             </nav>
 
             {/* Bill Modal */}
-            <BillModal bill={bill} onClose={() => setBill(null)} />
+            <BillModal
+                bill={bill}
+                type={billType}
+                onClose={() => {
+                    setBill(null);
+                    setBillType('receipt'); // Reset to default
+                }}
+                onConfirm={confirmTransaction}
+                processing={processing}
+            />
 
             {/* Change Password Modal */}
             {showPasswordModal && (
