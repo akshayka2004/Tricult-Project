@@ -203,8 +203,8 @@ export default function AdminDashboard() {
             {/* ── Header ── */}
             <header className="admin-header flex-col h-auto py-4 gap-2">
                 <div className="admin-brand flex-col">
-                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-16 w-auto object-contain mb-2 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
-                    <h1 className="admin-title text-2xl">ADMIN PANEL</h1>
+                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain mb-2 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
+                    <h1 className="admin-title text-lg sm:text-2xl">ADMIN PANEL</h1>
                 </div>
                 <button onClick={handleLogout} className="admin-exit-btn absolute top-4 right-6">
                     <LogOut className="w-4 h-4" />
@@ -422,7 +422,7 @@ export default function AdminDashboard() {
                                 <p className="empty-title">NO USERS FOUND</p>
                             </div>
                         ) : (
-                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px', maxHeight: '60vh', overflowY: 'auto', paddingRight: '4px' }}>
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(260px, 100%), 1fr))', gap: '16px', maxHeight: '60vh', overflowY: 'auto', paddingRight: '4px' }}>
                                 {users.map((u, index) => (
                                     <div
                                         key={u.id}

@@ -111,13 +111,13 @@ export default function UserDashboard() {
     };
 
     return (
-        <div className="app-container" style={{ maxWidth: '480px', margin: '0 auto' }}>
+        <div className="app-container" style={{ maxWidth: '480px', margin: '0 auto', paddingBottom: '100px' }}>
             {/* ── Header ── */}
             {/* ── Header ── */}
             <header className="app-header flex-col gap-2 h-auto py-4">
                 <div className="flex flex-col items-center">
-                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,0,0.6)]" />
-                    <h1 className="text-3xl font-black text-[#ffff00] tracking-wider drop-shadow-[0_0_10px_rgba(255,255,0,0.5)] mt-1">GAME HUB</h1>
+                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-12 sm:h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,0,0.6)]" />
+                    <h1 className="text-xl sm:text-3xl font-black text-[#ffff00] tracking-wider drop-shadow-[0_0_10px_rgba(255,255,0,0.5)] mt-1">GAME HUB</h1>
                 </div>
                 <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm absolute top-4 right-4">
                     <LogOut className="w-3.5 h-3.5" />

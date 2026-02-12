@@ -92,8 +92,8 @@ export default function VolunteerDashboard() {
             {/* ── Header ── */}
             <header className="monitor-header flex-col h-auto py-4 gap-2 relative">
                 <div className="flex flex-col items-center gap-1">
-                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
-                    <h1 className="text-glow-green text-2xl" style={{ color: '#ccff00' }}>HUB MONITOR</h1>
+                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
+                    <h1 className="text-glow-green text-lg sm:text-2xl" style={{ color: '#ccff00' }}>HUB MONITOR</h1>
                 </div>
                 <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm absolute top-4 right-6">
                     <LogOut className="w-4 h-4" />

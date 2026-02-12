@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Lock, Check, AlertTriangle, ShieldCheck } from 'lucide-react';
+import { X, Lock, Check, AlertTriangle, ShieldCheck, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import bcrypt from 'bcryptjs';
 
@@ -12,6 +12,9 @@ export default function ChangePasswordModal({ user, onClose }) {
     const [success, setSuccess] = useState(false);
     const [loading, setLoading] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
+    const [showCurrent, setShowCurrent] = useState(false);
+    const [showNew, setShowNew] = useState(false);
+    const [showConfirm, setShowConfirm] = useState(false);
 
     const handleClose = () => {
         setIsClosing(true);
@@ -65,154 +68,164 @@ export default function ChangePasswordModal({ user, onClose }) {
         }
     };
 
+    const PasswordField = ({ label, value, onChange, placeholder, show, toggleShow }) => (
+        <div className="space-y-2">
+            <label className="block text-sm font-semibold font-['Rajdhani'] text-[#aaa] tracking-wide">
+                {label}
+            </label>
+            <div className="relative group">
+                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#555] group-focus-within:text-[#ffff00] transition-colors" />
+                <input
+                    type={show ? 'text' : 'password'}
+                    value={value}
+                    onChange={onChange}
+                    placeholder={placeholder}
+                    required
+                    className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl py-3.5 pl-11 pr-12 text-[#e8e8e8] text-[15px] placeholder:text-[#3a3a3a] focus:outline-none focus:border-[#ffff00]/40 focus:shadow-[0_0_0_3px_rgba(255,255,0,0.08)] transition-all duration-200 font-['Rajdhani'] font-medium"
+                />
+                <button
+                    type="button"
+                    onClick={toggleShow}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#ffff00] transition-colors"
+                    tabIndex={-1}
+                >
+                    {show ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
+                </button>
+            </div>
+        </div>
+    );
+
     return (
         <div
-            className={`fixed inset-0 z-50 flex items-center justify-center p-8 bg-black/90 backdrop-blur-[14px] transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'animate-fade-in'}`}
+            className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'animate-fade-in'}`}
             onClick={handleClose}
         >
-
             <div
-                className={`relative w-full max-w-[380px] bg-gradient-to-b from-[#121212] to-[#0b0b0b] border border-[#ffff00]/15 rounded-3xl overflow-hidden shadow-[0_25px_60px_rgba(0,0,0,0.85),0_0_40px_rgba(255,255,0,0.05)] transition-all duration-300 ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'animate-slide-up'}`}
+                className={`relative w-full max-w-[400px] bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-[#ffff00]/12 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(255,255,0,0.04)] transition-all duration-300 max-h-[95vh] overflow-y-auto ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'animate-slide-up'}`}
                 onClick={(e) => e.stopPropagation()}
             >
 
-                {/* Accent Line */}
+                {/* Top Accent */}
                 <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffff00] to-[#ffcc00] opacity-60"></div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-10 pt-10 pb-9 border-b border-[#ffff00]/10">
-
-                    <div className="flex items-center gap-5">
-                        <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[#ffff00]/20 to-[#ffcc00]/10 border border-[#ffff00]/25 flex items-center justify-center text-[#ffff00] shadow-[0_0_15px_rgba(255,255,0,0.12)]">
-                            <ShieldCheck className="w-6 h-6" />
+                <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5 border-b border-[#ffff00]/8">
+                    <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ffff00]/15 to-[#ffcc00]/8 border border-[#ffff00]/20 flex items-center justify-center text-[#ffff00]">
+                            <ShieldCheck className="w-5 h-5" />
                         </div>
-
-                        <h2 className="font-['Orbitron'] text-xl font-semibold tracking-wider text-[#ffff00] uppercase">
+                        <h2 className="font-['Orbitron'] text-sm sm:text-base font-bold tracking-wider text-[#ffff00] uppercase">
                             Change Password
                         </h2>
                     </div>
-
                     <button
                         onClick={handleClose}
-                        className="w-10 h-10 rounded-lg border border-white/10 bg-white/[0.02] text-[#666] flex items-center justify-center transition-all duration-300 hover:bg-[#ff3366]/10 hover:text-[#ff3366] hover:border-[#ff3366]/30"
+                        className="w-9 h-9 rounded-lg border border-white/8 bg-white/[0.02] text-[#666] flex items-center justify-center transition-all duration-200 hover:bg-[#ff3366]/10 hover:text-[#ff3366] hover:border-[#ff3366]/25"
                     >
-                        <X className="w-5 h-5" />
+                        <X className="w-4 h-4" />
                     </button>
-
                 </div>
 
                 {/* Body */}
-                <div className="px-10 py-16">
+                <div className="px-5 py-5 sm:px-6 sm:py-6">
 
                     {success ? (
 
-                        <div className="flex flex-col items-center justify-center py-20 text-center animate-scale-in">
-
-                            <div className="w-24 h-24 rounded-full bg-gradient-to-br from-[#ffff00]/20 to-[#ffcc00]/10 flex items-center justify-center mb-10 border border-[#ffff00]/30 shadow-[0_0_40px_rgba(255,255,0,0.18)]">
-                                <Check className="w-12 h-12 text-[#ffff00]" />
+                        <div className="flex flex-col items-center justify-center py-10 text-center animate-scale-in">
+                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#ffff00]/15 to-[#ffcc00]/8 flex items-center justify-center mb-5 border border-[#ffff00]/25 shadow-[0_0_30px_rgba(255,255,0,0.12)]">
+                                <Check className="w-10 h-10 text-[#ffff00]" />
                             </div>
-
-                            <h3 className="font-['Orbitron'] text-2xl font-bold text-white mb-4 tracking-wide">
+                            <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-2 tracking-wide">
                                 PASSWORD UPDATED
                             </h3>
-
-                            <p className="text-[#888] text-base font-['Rajdhani']">
+                            <p className="text-[#888] text-sm font-['Rajdhani'] font-medium">
                                 Your password has been changed successfully.
                             </p>
-
                         </div>
 
                     ) : (
 
-                        <form onSubmit={handleSubmit} className="space-y-12">
+                        <form onSubmit={handleSubmit} className="space-y-5">
 
-                            {/* Current Password */}
-                            <div className="space-y-4">
-                                <label className="block text-xs font-bold font-['Share_Tech_Mono'] text-[#8a8a8a] uppercase tracking-[0.15em] ml-1">
-                                    Current Password
-                                </label>
-
-                                <div className="relative group">
-                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#555] group-focus-within:text-[#ffff00]" />
-
-                                    <input
-                                        type="password"
-                                        value={currentPassword}
-                                        onChange={(e) => setCurrentPassword(e.target.value)}
-                                        placeholder="Enter current password"
-                                        required
-                                        className="w-full bg-[#0a0a0a] border border-[#242424] rounded-2xl py-[20px] pl-14 pr-6 text-white placeholder:text-[#444] focus:outline-none focus:border-[#ffff00]/40 focus:shadow-[0_0_0_3px_rgba(255,255,0,0.10),0_0_30px_rgba(255,255,0,0.10)] transition-all duration-300 font-['Rajdhani'] text-lg"
-                                    />
-                                </div>
+                            {/* Divider Label */}
+                            <div className="flex items-center gap-3 mb-1">
+                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#ffff00]/10"></div>
+                                <span className="text-[11px] font-bold font-['Share_Tech_Mono'] text-[#555] tracking-[0.2em] uppercase">Security</span>
+                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#ffff00]/10"></div>
                             </div>
 
-                            {/* New Password */}
-                            <div className="space-y-4">
-                                <label className="block text-xs font-bold font-['Share_Tech_Mono'] text-[#8a8a8a] uppercase tracking-[0.15em] ml-1">
-                                    New Password
-                                </label>
+                            <PasswordField
+                                label="Current Password"
+                                value={currentPassword}
+                                onChange={(e) => setCurrentPassword(e.target.value)}
+                                placeholder="Enter current password"
+                                show={showCurrent}
+                                toggleShow={() => setShowCurrent(!showCurrent)}
+                            />
 
-                                <div className="relative group">
-                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#555] group-focus-within:text-[#ffff00]" />
-
-                                    <input
-                                        type="password"
-                                        value={newPassword}
-                                        onChange={(e) => setNewPassword(e.target.value)}
-                                        placeholder="Enter new password"
-                                        required
-                                        className="w-full bg-[#0a0a0a] border border-[#242424] rounded-2xl py-[20px] pl-14 pr-6 text-white placeholder:text-[#444] focus:outline-none focus:border-[#ffff00]/40 focus:shadow-[0_0_0_3px_rgba(255,255,0,0.10),0_0_30px_rgba(255,255,0,0.10)] transition-all duration-300 font-['Rajdhani'] text-lg"
-                                    />
-                                </div>
+                            {/* Divider Label */}
+                            <div className="flex items-center gap-3 pt-2">
+                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#ffff00]/10"></div>
+                                <span className="text-[11px] font-bold font-['Share_Tech_Mono'] text-[#555] tracking-[0.2em] uppercase">New Password</span>
+                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#ffff00]/10"></div>
                             </div>
 
-                            {/* Confirm Password */}
-                            <div className="space-y-4">
-                                <label className="block text-xs font-bold font-['Share_Tech_Mono'] text-[#8a8a8a] uppercase tracking-[0.15em] ml-1">
-                                    Confirm New Password
-                                </label>
+                            <PasswordField
+                                label="New Password"
+                                value={newPassword}
+                                onChange={(e) => setNewPassword(e.target.value)}
+                                placeholder="Enter new password"
+                                show={showNew}
+                                toggleShow={() => setShowNew(!showNew)}
+                            />
 
-                                <div className="relative group">
-                                    <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-[#555] group-focus-within:text-[#ffff00]" />
-
-                                    <input
-                                        type="password"
-                                        value={confirmPassword}
-                                        onChange={(e) => setConfirmPassword(e.target.value)}
-                                        placeholder="Confirm new password"
-                                        required
-                                        className="w-full bg-[#0a0a0a] border border-[#242424] rounded-2xl py-[20px] pl-14 pr-6 text-white placeholder:text-[#444] focus:outline-none focus:border-[#ffff00]/40 focus:shadow-[0_0_0_3px_rgba(255,255,0,0.10),0_0_30px_rgba(255,255,0,0.10)] transition-all duration-300 font-['Rajdhani'] text-lg"
-                                    />
-                                </div>
-                            </div>
+                            <PasswordField
+                                label="Confirm New Password"
+                                value={confirmPassword}
+                                onChange={(e) => setConfirmPassword(e.target.value)}
+                                placeholder="Re-enter new password"
+                                show={showConfirm}
+                                toggleShow={() => setShowConfirm(!showConfirm)}
+                            />
 
                             {/* Error */}
                             {error && (
-                                <div className="flex items-start gap-4 p-6 rounded-xl bg-[#ff3366]/10 border border-[#ff3366]/20">
-                                    <AlertTriangle className="w-6 h-6 text-[#ff3366] flex-shrink-0 mt-1" />
-                                    <span className="text-[#ff3366] text-base font-['Rajdhani'] font-medium">
+                                <div className="flex items-center gap-3 p-3.5 rounded-xl bg-[#ff3366]/8 border border-[#ff3366]/15">
+                                    <AlertTriangle className="w-5 h-5 text-[#ff3366] flex-shrink-0" />
+                                    <span className="text-[#ff6688] text-sm font-['Rajdhani'] font-semibold">
                                         {error}
                                     </span>
                                 </div>
                             )}
 
-                            {/* Submit */}
-                            <div className="pt-4">
+                            {/* Actions */}
+                            <div className="flex gap-3 pt-2">
+                                <button
+                                    type="button"
+                                    onClick={handleClose}
+                                    className="flex-1 py-3.5 rounded-xl bg-white/[0.04] border border-white/8 text-[#888] font-['Orbitron'] text-[11px] font-bold tracking-wider uppercase transition-all duration-200 hover:bg-white/[0.06] hover:text-[#ccc]"
+                                >
+                                    Cancel
+                                </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="w-full relative overflow-hidden group bg-gradient-to-r from-[#ffff00] to-[#ffcc00] text-black font-bold font-['Orbitron'] text-base tracking-wider uppercase py-[20px] rounded-2xl transition-all duration-300 hover:-translate-y-[1px] hover:shadow-[0_18px_45px_rgba(255,255,0,0.28)] disabled:opacity-50"
+                                    className="flex-[1.5] relative overflow-hidden group bg-gradient-to-r from-[#ffff00] to-[#ffcc00] text-black font-bold font-['Orbitron'] text-[11px] tracking-wider uppercase py-3.5 rounded-xl transition-all duration-300 hover:-translate-y-[1px] hover:shadow-[0_12px_30px_rgba(255,255,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
-                                    <span className="relative z-10 flex items-center justify-center gap-3">
+                                    <span className="relative z-10 flex items-center justify-center gap-2">
                                         {loading ? (
                                             <>
-                                                <span className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin"></span>
+                                                <Loader2 className="w-4 h-4 animate-spin" />
                                                 UPDATING...
                                             </>
                                         ) : (
-                                            'UPDATE PASSWORD'
+                                            <>
+                                                <ShieldCheck className="w-4 h-4" />
+                                                UPDATE
+                                            </>
                                         )}
                                     </span>
+                                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent"></div>
                                 </button>
                             </div>
 

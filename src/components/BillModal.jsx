@@ -11,7 +11,7 @@ export default function BillModal({ bill, onClose }) {
             >
                 <div className="glass-card overflow-hidden">
                     {/* Header */}
-                    <div className="relative p-6 bg-gradient-to-r from-cyber-cyan/10 to-cyber-magenta/10 border-b border-cyber-border">
+                    <div className="relative p-4 sm:p-6 bg-gradient-to-r from-cyber-cyan/10 to-cyber-magenta/10 border-b border-cyber-border">
                         <button onClick={onClose} className="modal-close absolute top-4 right-4">
                             <X className="w-4 h-4" />
                         </button>
@@ -27,7 +27,7 @@ export default function BillModal({ bill, onClose }) {
                     </div>
 
                     {/* Avatar & Username */}
-                    <div className="p-6 flex items-center gap-4 border-b border-cyber-border/30">
+                    <div className="p-4 sm:p-6 flex items-center gap-4 border-b border-cyber-border/30">
                         <div className="w-12 h-12 rounded-xl bg-cyber-bg/40 border border-cyber-cyan/30 flex items-center justify-center flex-shrink-0 text-cyber-cyan">
                             <User className="w-6 h-6" />
                         </div>
@@ -38,7 +38,7 @@ export default function BillModal({ bill, onClose }) {
                     </div>
 
                     {/* Details */}
-                    <div className="p-6 space-y-4">
+                    <div className="p-4 sm:p-6 space-y-4">
                         <div className="flex items-center justify-between">
                             <span className="flex items-center gap-2.5 text-cyber-muted font-['Rajdhani'] text-sm font-medium">
                                 <Hash className="w-4 h-4 text-cyber-cyan" />
@@ -89,7 +89,7 @@ export default function BillModal({ bill, onClose }) {
                     </div>
 
                     {/* Footer */}
-                    <div className="px-6 pb-6">
+                    <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                         <button onClick={onClose} className="btn-base cyber-btn btn-full">
                             CLOSE
                         </button>

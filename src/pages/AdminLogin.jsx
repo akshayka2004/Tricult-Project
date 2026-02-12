@@ -34,13 +34,13 @@ export default function AdminLogin() {
                     <img
                         src="/assets/game-hub-logo.png"
                         alt="Game Hub Logo"
-                        className="w-40 h-40 object-contain mb-4 drop-shadow-[0_0_25px_rgba(255,255,0,0.8)]"
+                        className="w-24 h-24 sm:w-40 sm:h-40 object-contain mb-4 drop-shadow-[0_0_25px_rgba(255,255,0,0.8)]"
                     />
-                    <h1 className="text-5xl font-black tracking-widest text-[#ffff00] drop-shadow-[0_0_15px_rgba(255,255,0,0.6)] text-center">ADMIN PORTAL</h1>
+                    <h1 className="text-3xl sm:text-5xl font-black tracking-widest text-[#ffff00] drop-shadow-[0_0_15px_rgba(255,255,0,0.6)] text-center">ADMIN PORTAL</h1>
                 </div>
 
                 {/* Login Card */}
-                <div className="glass-card p-10" style={{ borderColor: 'rgba(255, 255, 0, 0.15)' }}>
+                <div className="glass-card p-6 sm:p-10" style={{ borderColor: 'rgba(255, 255, 0, 0.15)' }}>
                     <h2 className="text-lg font-['Orbitron'] text-cyber-text mb-10 text-center tracking-widest">
                         SECURE LOGIN
                     </h2>

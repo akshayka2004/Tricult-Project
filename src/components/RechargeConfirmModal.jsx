@@ -34,7 +34,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
     const newBalance = currentBalance + amount;
 
     return (
-        <div className={`fixed inset-0 z-[1000] flex items-center justify-center p-4 bg-black/95 backdrop-blur-[12px] transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'animate-fade-in'}`} onClick={handleClose}>
+        <div className={`fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4 bg-black/95 backdrop-blur-[12px] transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'animate-fade-in'}`} onClick={handleClose}>
             <div
                 className={`relative w-full max-w-[420px] bg-gradient-to-br from-[#0f0f0f] to-[#080808] border-[1.5px] border-[#ffff00]/25 rounded-[24px] overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,0,0.1),0_0_60px_rgba(255,255,0,0.1)] transition-all duration-300 ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'animate-slide-up'}`}
                 onClick={(e) => e.stopPropagation()}
@@ -43,7 +43,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                 <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#ffff00] to-[#ffcc00] opacity-80"></div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-7 pt-6 pb-5 border-b border-[#ffff00]/10">
+                <div className="flex items-center justify-between px-4 sm:px-7 pt-6 pb-5 border-b border-[#ffff00]/10">
                     <div className="flex items-center gap-3">
                         <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ffff00]/15 to-[#ffcc00]/10 border border-[#ffff00]/30 flex items-center justify-center text-[#ffff00] shadow-[0_0_20px_rgba(255,255,0,0.15)] text-lg">
                             ⚡
@@ -61,7 +61,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                 </div>
 
                 {/* Body */}
-                <div className="px-7 py-7 flex flex-col gap-6">
+                <div className="px-4 sm:px-7 py-5 sm:py-7 flex flex-col gap-5 sm:gap-6">
                     {/* User Card */}
                     <div className="flex items-center gap-4 p-5 bg-gradient-to-br from-[#ffff00]/5 to-[#ffcc00]/[0.03] border border-[#ffff00]/15 rounded-2xl relative overflow-hidden">
                         <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#ffff00] to-[#ffcc00]"></div>
@@ -111,8 +111,8 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                                 <button
                                     key={val}
                                     className={`py-3 px-2 rounded-xl border font-['Rajdhani'] text-sm font-semibold transition-all duration-200 ${amount === val
-                                            ? 'bg-[#ffff00]/20 border-[#ffff00] text-[#ffff00] shadow-[0_4px_15px_rgba(255,255,0,0.2)]'
-                                            : 'bg-[#ffff00]/5 border-[#ffff00]/15 text-[#884] hover:bg-[#ffff00]/10 hover:border-[#ffff00]/30 hover:text-[#ffff00] hover:-translate-y-0.5'
+                                        ? 'bg-[#ffff00]/20 border-[#ffff00] text-[#ffff00] shadow-[0_4px_15px_rgba(255,255,0,0.2)]'
+                                        : 'bg-[#ffff00]/5 border-[#ffff00]/15 text-[#884] hover:bg-[#ffff00]/10 hover:border-[#ffff00]/30 hover:text-[#ffff00] hover:-translate-y-0.5'
                                         }`}
                                     onClick={() => handleQuickAmount(val)}
                                 >
@@ -143,7 +143,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                 </div>
 
                 {/* Footer */}
-                <div className="flex gap-3 px-7 pb-7 pt-0">
+                <div className="flex gap-3 px-4 sm:px-7 pb-5 sm:pb-7 pt-0">
                     <button
                         onClick={handleClose}
                         className="flex-1 py-4 rounded-xl bg-white/[0.05] border border-white/10 text-[#888] font-['Orbitron'] text-[13px] font-bold tracking-wider uppercase transition-all duration-300 hover:bg-white/[0.08] hover:border-white/20 hover:text-[#e0e0e0]"

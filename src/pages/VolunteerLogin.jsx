@@ -34,9 +34,9 @@ export default function VolunteerLogin() {
                     <img
                         src="/assets/game-hub-logo.png"
                         alt="Game Hub Logo"
-                        className="w-40 h-40 object-contain mb-4 drop-shadow-[0_0_25px_rgba(255,255,0,0.8)]"
+                        className="w-24 h-24 sm:w-40 sm:h-40 object-contain mb-4 drop-shadow-[0_0_25px_rgba(255,255,0,0.8)]"
                     />
-                    <h1 className="text-glow-green text-5xl font-black tracking-widest text-center" style={{ color: '#00ff88' }}>HUB MONITOR</h1>
+                    <h1 className="text-glow-green text-3xl sm:text-5xl font-black tracking-widest text-center" style={{ color: '#00ff88' }}>HUB MONITOR</h1>
                 </div>
 
                 {/* Login Card */}
