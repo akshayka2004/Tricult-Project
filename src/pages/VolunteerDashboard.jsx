@@ -227,6 +227,14 @@ export default function VolunteerDashboard() {
                     </div>
                 </div>
             </main>
+
+            {/* Change Password Modal */}
+            {showPasswordModal && (
+                <ChangePasswordModal
+                    user={user}
+                    onClose={() => setShowPasswordModal(false)}
+                />
+            )}
         </div>
     );
 }
