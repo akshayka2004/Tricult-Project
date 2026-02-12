@@ -95,9 +95,8 @@ export default function VolunteerDashboard() {
                     <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
                     <h1 className="text-glow-green text-lg sm:text-2xl" style={{ color: '#ccff00' }}>HUB MONITOR</h1>
                 </div>
-                <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm" style={{ position: 'absolute', top: '12px', right: '12px' }}>
+                <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm" style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <LogOut className="w-4 h-4" />
-                    EXIT
                 </button>
             </header>
 

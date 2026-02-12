@@ -118,9 +118,8 @@ export default function UserDashboard() {
                     <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-12 sm:h-20 w-auto object-contain drop-shadow-[0_0_15px_rgba(255,255,0,0.6)]" />
                     <h1 className="text-xl sm:text-3xl font-black text-[#ffff00] tracking-wider drop-shadow-[0_0_10px_rgba(255,255,0,0.5)] mt-1">GAME HUB</h1>
                 </div>
-                <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm" style={{ position: 'absolute', top: '12px', right: '12px' }}>
-                    <LogOut className="w-3.5 h-3.5" />
-                    EXIT
+                <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm" style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <LogOut className="w-4 h-4" />
                 </button>
             </header>
 

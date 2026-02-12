@@ -206,9 +206,8 @@ export default function AdminDashboard() {
                     <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain mb-2 drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
                     <h1 className="admin-title text-lg sm:text-2xl">ADMIN PANEL</h1>
                 </div>
-                <button onClick={handleLogout} className="admin-exit-btn" style={{ position: 'absolute', top: '16px', right: '16px' }}>
-                    <LogOut className="w-4 h-4" />
-                    EXIT
+                <button onClick={handleLogout} className="admin-exit-btn" style={{ position: 'absolute', top: '16px', right: '16px', width: '40px', height: '40px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <LogOut className="w-5 h-5" />
                 </button>
             </header>
 
