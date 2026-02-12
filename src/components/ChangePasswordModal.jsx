@@ -15,6 +15,7 @@ export default function ChangePasswordModal({ user, onClose }) {
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
+    const [focused, setFocused] = useState(null);
 
     const handleClose = () => {
         setIsClosing(true);
@@ -68,172 +69,417 @@ export default function ChangePasswordModal({ user, onClose }) {
         }
     };
 
-    const PasswordField = ({ label, value, onChange, placeholder, show, toggleShow }) => (
-        <div className="space-y-2">
-            <label className="block text-sm font-semibold font-['Rajdhani'] text-[#aaa] tracking-wide">
-                {label}
-            </label>
-            <div className="relative group">
-                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-[18px] h-[18px] text-[#555] group-focus-within:text-[#ffff00] transition-colors" />
+    // ── All styles defined as objects ──
+    const styles = {
+        overlay: {
+            position: 'fixed',
+            top: 0, left: 0, right: 0, bottom: 0,
+            zIndex: 1000,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '16px',
+            background: 'rgba(0, 0, 0, 0.92)',
+            backdropFilter: 'blur(12px)',
+            WebkitBackdropFilter: 'blur(12px)',
+            transition: 'opacity 0.3s ease',
+            opacity: isClosing ? 0 : 1,
+        },
+        card: {
+            position: 'relative',
+            width: '100%',
+            maxWidth: '380px',
+            maxHeight: '92vh',
+            overflowY: 'auto',
+            background: 'linear-gradient(180deg, #111111, #0a0a0a)',
+            border: '1px solid rgba(255, 255, 0, 0.12)',
+            borderRadius: '20px',
+            boxShadow: '0 24px 60px rgba(0,0,0,0.85), 0 0 40px rgba(255,255,0,0.04)',
+            transition: 'all 0.3s ease',
+            transform: isClosing ? 'scale(0.95) translateY(16px)' : 'scale(1) translateY(0)',
+            opacity: isClosing ? 0 : 1,
+        },
+        accentLine: {
+            position: 'absolute',
+            top: 0, left: 0, right: 0,
+            height: '2px',
+            background: 'linear-gradient(90deg, transparent, #ffff00, #ffcc00, transparent)',
+            opacity: 0.7,
+        },
+        header: {
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '18px 20px',
+            borderBottom: '1px solid rgba(255, 255, 0, 0.08)',
+        },
+        headerLeft: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+        },
+        headerIcon: {
+            width: '40px',
+            height: '40px',
+            borderRadius: '12px',
+            background: 'linear-gradient(135deg, rgba(255,255,0,0.12), rgba(255,204,0,0.06))',
+            border: '1px solid rgba(255,255,0,0.18)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            color: '#ffff00',
+            flexShrink: 0,
+        },
+        headerTitle: {
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: '14px',
+            fontWeight: 700,
+            letterSpacing: '1.5px',
+            color: '#ffff00',
+            textTransform: 'uppercase',
+        },
+        closeBtn: {
+            width: '36px',
+            height: '36px',
+            borderRadius: '10px',
+            border: '1px solid rgba(255,255,255,0.08)',
+            background: 'rgba(255,255,255,0.02)',
+            color: '#666',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+            flexShrink: 0,
+        },
+        body: {
+            padding: '20px',
+        },
+        fieldWrapper: {
+            marginBottom: '16px',
+        },
+        label: {
+            display: 'block',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '14px',
+            fontWeight: 600,
+            color: '#b0b0b0',
+            marginBottom: '8px',
+            letterSpacing: '0.3px',
+        },
+        inputWrapper: {
+            position: 'relative',
+        },
+        lockIcon: (isFocused) => ({
+            position: 'absolute',
+            left: '14px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            width: '18px',
+            height: '18px',
+            color: isFocused ? '#ffff00' : '#555',
+            transition: 'color 0.2s ease',
+            pointerEvents: 'none',
+        }),
+        input: (isFocused) => ({
+            width: '100%',
+            boxSizing: 'border-box',
+            background: '#080808',
+            border: isFocused ? '1.5px solid rgba(255,255,0,0.4)' : '1.5px solid #222',
+            borderRadius: '12px',
+            padding: '14px 44px 14px 42px',
+            color: '#e8e8e8',
+            fontSize: '15px',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontWeight: 500,
+            outline: 'none',
+            transition: 'all 0.2s ease',
+            boxShadow: isFocused ? '0 0 0 3px rgba(255,255,0,0.06), 0 0 20px rgba(255,255,0,0.06)' : 'none',
+        }),
+        eyeBtn: {
+            position: 'absolute',
+            right: '12px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            background: 'none',
+            border: 'none',
+            color: '#555',
+            cursor: 'pointer',
+            padding: '4px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+        },
+        sectionDivider: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '12px',
+            margin: '20px 0 16px',
+        },
+        dividerLine: {
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,0,0.1))',
+        },
+        dividerLineReverse: {
+            flex: 1,
+            height: '1px',
+            background: 'linear-gradient(90deg, rgba(255,255,0,0.1), transparent)',
+        },
+        dividerText: {
+            fontFamily: "'Share Tech Mono', monospace",
+            fontSize: '10px',
+            fontWeight: 700,
+            letterSpacing: '2px',
+            color: '#555',
+            textTransform: 'uppercase',
+        },
+        errorBox: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+            padding: '12px 14px',
+            borderRadius: '12px',
+            background: 'rgba(255,51,102,0.08)',
+            border: '1px solid rgba(255,51,102,0.15)',
+            marginTop: '8px',
+            marginBottom: '4px',
+        },
+        errorText: {
+            color: '#ff6688',
+            fontSize: '14px',
+            fontFamily: "'Rajdhani', sans-serif",
+            fontWeight: 600,
+        },
+        footer: {
+            display: 'flex',
+            gap: '10px',
+            padding: '4px 20px 20px',
+        },
+        cancelBtn: {
+            flex: 1,
+            padding: '14px 0',
+            borderRadius: '12px',
+            background: 'rgba(255,255,255,0.03)',
+            border: '1px solid rgba(255,255,255,0.08)',
+            color: '#888',
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            transition: 'all 0.2s ease',
+        },
+        submitBtn: {
+            flex: 1.6,
+            padding: '14px 0',
+            borderRadius: '12px',
+            background: 'linear-gradient(90deg, #ffff00, #ffcc00)',
+            border: 'none',
+            color: '#000',
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: '11px',
+            fontWeight: 700,
+            letterSpacing: '1.5px',
+            textTransform: 'uppercase',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            opacity: loading ? 0.5 : 1,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '8px',
+        },
+        // Success screen 
+        successContainer: {
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '40px 20px',
+            textAlign: 'center',
+        },
+        successIcon: {
+            width: '72px',
+            height: '72px',
+            borderRadius: '50%',
+            background: 'linear-gradient(135deg, rgba(255,255,0,0.12), rgba(255,204,0,0.06))',
+            border: '1.5px solid rgba(255,255,0,0.2)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginBottom: '20px',
+            color: '#ffff00',
+            boxShadow: '0 0 30px rgba(255,255,0,0.1)',
+        },
+        successTitle: {
+            fontFamily: "'Orbitron', sans-serif",
+            fontSize: '18px',
+            fontWeight: 700,
+            color: '#fff',
+            letterSpacing: '1px',
+            marginBottom: '8px',
+        },
+        successDesc: {
+            fontFamily: "'Rajdhani', sans-serif",
+            fontSize: '14px',
+            color: '#888',
+            fontWeight: 500,
+        },
+    };
+
+    const PasswordField = ({ id, label, value, onChange, placeholder, show, toggleShow }) => (
+        <div style={styles.fieldWrapper}>
+            <label style={styles.label}>{label}</label>
+            <div style={styles.inputWrapper}>
+                <Lock style={styles.lockIcon(focused === id)} />
                 <input
                     type={show ? 'text' : 'password'}
                     value={value}
                     onChange={onChange}
                     placeholder={placeholder}
                     required
-                    className="w-full bg-[#0a0a0a] border border-[#2a2a2a] rounded-xl py-3.5 pl-11 pr-12 text-[#e8e8e8] text-[15px] placeholder:text-[#3a3a3a] focus:outline-none focus:border-[#ffff00]/40 focus:shadow-[0_0_0_3px_rgba(255,255,0,0.08)] transition-all duration-200 font-['Rajdhani'] font-medium"
+                    onFocus={() => setFocused(id)}
+                    onBlur={() => setFocused(null)}
+                    style={styles.input(focused === id)}
                 />
                 <button
                     type="button"
                     onClick={toggleShow}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#555] hover:text-[#ffff00] transition-colors"
+                    style={styles.eyeBtn}
                     tabIndex={-1}
                 >
-                    {show ? <EyeOff className="w-[18px] h-[18px]" /> : <Eye className="w-[18px] h-[18px]" />}
+                    {show ? <EyeOff style={{ width: 18, height: 18 }} /> : <Eye style={{ width: 18, height: 18 }} />}
                 </button>
             </div>
         </div>
     );
 
     return (
-        <div
-            className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'animate-fade-in'}`}
-            onClick={handleClose}
-        >
-            <div
-                className={`relative w-full max-w-[400px] bg-gradient-to-b from-[#111] to-[#0a0a0a] border border-[#ffff00]/12 rounded-2xl overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.8),0_0_30px_rgba(255,255,0,0.04)] transition-all duration-300 max-h-[95vh] overflow-y-auto ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'animate-slide-up'}`}
-                onClick={(e) => e.stopPropagation()}
-            >
+        <div style={styles.overlay} onClick={handleClose}>
+            <div style={styles.card} onClick={(e) => e.stopPropagation()}>
 
-                {/* Top Accent */}
-                <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#ffff00] to-[#ffcc00] opacity-60"></div>
+                {/* Accent */}
+                <div style={styles.accentLine}></div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-4 sm:px-6 sm:py-5 border-b border-[#ffff00]/8">
-                    <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#ffff00]/15 to-[#ffcc00]/8 border border-[#ffff00]/20 flex items-center justify-center text-[#ffff00]">
-                            <ShieldCheck className="w-5 h-5" />
+                <div style={styles.header}>
+                    <div style={styles.headerLeft}>
+                        <div style={styles.headerIcon}>
+                            <ShieldCheck style={{ width: 20, height: 20 }} />
                         </div>
-                        <h2 className="font-['Orbitron'] text-sm sm:text-base font-bold tracking-wider text-[#ffff00] uppercase">
-                            Change Password
-                        </h2>
+                        <span style={styles.headerTitle}>Change Password</span>
                     </div>
                     <button
                         onClick={handleClose}
-                        className="w-9 h-9 rounded-lg border border-white/8 bg-white/[0.02] text-[#666] flex items-center justify-center transition-all duration-200 hover:bg-[#ff3366]/10 hover:text-[#ff3366] hover:border-[#ff3366]/25"
+                        style={styles.closeBtn}
+                        onMouseEnter={(e) => { e.currentTarget.style.background = 'rgba(255,51,102,0.1)'; e.currentTarget.style.color = '#ff3366'; }}
+                        onMouseLeave={(e) => { e.currentTarget.style.background = 'rgba(255,255,255,0.02)'; e.currentTarget.style.color = '#666'; }}
                     >
-                        <X className="w-4 h-4" />
+                        <X style={{ width: 16, height: 16 }} />
                     </button>
                 </div>
 
-                {/* Body */}
-                <div className="px-5 py-5 sm:px-6 sm:py-6">
-
-                    {success ? (
-
-                        <div className="flex flex-col items-center justify-center py-10 text-center animate-scale-in">
-                            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-[#ffff00]/15 to-[#ffcc00]/8 flex items-center justify-center mb-5 border border-[#ffff00]/25 shadow-[0_0_30px_rgba(255,255,0,0.12)]">
-                                <Check className="w-10 h-10 text-[#ffff00]" />
-                            </div>
-                            <h3 className="font-['Orbitron'] text-lg font-bold text-white mb-2 tracking-wide">
-                                PASSWORD UPDATED
-                            </h3>
-                            <p className="text-[#888] text-sm font-['Rajdhani'] font-medium">
-                                Your password has been changed successfully.
-                            </p>
+                {success ? (
+                    <div style={styles.successContainer}>
+                        <div style={styles.successIcon}>
+                            <Check style={{ width: 36, height: 36 }} />
                         </div>
+                        <div style={styles.successTitle}>PASSWORD UPDATED</div>
+                        <div style={styles.successDesc}>Your password has been changed successfully.</div>
+                    </div>
+                ) : (
+                    <>
+                        {/* Body */}
+                        <form onSubmit={handleSubmit}>
+                            <div style={styles.body}>
 
-                    ) : (
-
-                        <form onSubmit={handleSubmit} className="space-y-5">
-
-                            {/* Divider Label */}
-                            <div className="flex items-center gap-3 mb-1">
-                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#ffff00]/10"></div>
-                                <span className="text-[11px] font-bold font-['Share_Tech_Mono'] text-[#555] tracking-[0.2em] uppercase">Security</span>
-                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#ffff00]/10"></div>
-                            </div>
-
-                            <PasswordField
-                                label="Current Password"
-                                value={currentPassword}
-                                onChange={(e) => setCurrentPassword(e.target.value)}
-                                placeholder="Enter current password"
-                                show={showCurrent}
-                                toggleShow={() => setShowCurrent(!showCurrent)}
-                            />
-
-                            {/* Divider Label */}
-                            <div className="flex items-center gap-3 pt-2">
-                                <div className="h-px flex-1 bg-gradient-to-r from-transparent to-[#ffff00]/10"></div>
-                                <span className="text-[11px] font-bold font-['Share_Tech_Mono'] text-[#555] tracking-[0.2em] uppercase">New Password</span>
-                                <div className="h-px flex-1 bg-gradient-to-l from-transparent to-[#ffff00]/10"></div>
-                            </div>
-
-                            <PasswordField
-                                label="New Password"
-                                value={newPassword}
-                                onChange={(e) => setNewPassword(e.target.value)}
-                                placeholder="Enter new password"
-                                show={showNew}
-                                toggleShow={() => setShowNew(!showNew)}
-                            />
-
-                            <PasswordField
-                                label="Confirm New Password"
-                                value={confirmPassword}
-                                onChange={(e) => setConfirmPassword(e.target.value)}
-                                placeholder="Re-enter new password"
-                                show={showConfirm}
-                                toggleShow={() => setShowConfirm(!showConfirm)}
-                            />
-
-                            {/* Error */}
-                            {error && (
-                                <div className="flex items-center gap-3 p-3.5 rounded-xl bg-[#ff3366]/8 border border-[#ff3366]/15">
-                                    <AlertTriangle className="w-5 h-5 text-[#ff3366] flex-shrink-0" />
-                                    <span className="text-[#ff6688] text-sm font-['Rajdhani'] font-semibold">
-                                        {error}
-                                    </span>
+                                {/* Section: Current */}
+                                <div style={styles.sectionDivider}>
+                                    <div style={styles.dividerLine}></div>
+                                    <span style={styles.dividerText}>Verify Identity</span>
+                                    <div style={styles.dividerLineReverse}></div>
                                 </div>
-                            )}
 
-                            {/* Actions */}
-                            <div className="flex gap-3 pt-2">
+                                <PasswordField
+                                    id="current"
+                                    label="Current Password"
+                                    value={currentPassword}
+                                    onChange={(e) => setCurrentPassword(e.target.value)}
+                                    placeholder="Enter current password"
+                                    show={showCurrent}
+                                    toggleShow={() => setShowCurrent(!showCurrent)}
+                                />
+
+                                {/* Section: New */}
+                                <div style={styles.sectionDivider}>
+                                    <div style={styles.dividerLine}></div>
+                                    <span style={styles.dividerText}>Set New Password</span>
+                                    <div style={styles.dividerLineReverse}></div>
+                                </div>
+
+                                <PasswordField
+                                    id="new"
+                                    label="New Password"
+                                    value={newPassword}
+                                    onChange={(e) => setNewPassword(e.target.value)}
+                                    placeholder="Enter new password"
+                                    show={showNew}
+                                    toggleShow={() => setShowNew(!showNew)}
+                                />
+
+                                <PasswordField
+                                    id="confirm"
+                                    label="Confirm New Password"
+                                    value={confirmPassword}
+                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    placeholder="Re-enter new password"
+                                    show={showConfirm}
+                                    toggleShow={() => setShowConfirm(!showConfirm)}
+                                />
+
+                                {/* Error */}
+                                {error && (
+                                    <div style={styles.errorBox}>
+                                        <AlertTriangle style={{ width: 18, height: 18, color: '#ff3366', flexShrink: 0 }} />
+                                        <span style={styles.errorText}>{error}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Footer Buttons */}
+                            <div style={styles.footer}>
                                 <button
                                     type="button"
                                     onClick={handleClose}
-                                    className="flex-1 py-3.5 rounded-xl bg-white/[0.04] border border-white/8 text-[#888] font-['Orbitron'] text-[11px] font-bold tracking-wider uppercase transition-all duration-200 hover:bg-white/[0.06] hover:text-[#ccc]"
+                                    style={styles.cancelBtn}
+                                    onMouseEnter={(e) => { e.currentTarget.style.color = '#ccc'; e.currentTarget.style.background = 'rgba(255,255,255,0.06)'; }}
+                                    onMouseLeave={(e) => { e.currentTarget.style.color = '#888'; e.currentTarget.style.background = 'rgba(255,255,255,0.03)'; }}
                                 >
                                     Cancel
                                 </button>
                                 <button
                                     type="submit"
                                     disabled={loading}
-                                    className="flex-[1.5] relative overflow-hidden group bg-gradient-to-r from-[#ffff00] to-[#ffcc00] text-black font-bold font-['Orbitron'] text-[11px] tracking-wider uppercase py-3.5 rounded-xl transition-all duration-300 hover:-translate-y-[1px] hover:shadow-[0_12px_30px_rgba(255,255,0,0.25)] disabled:opacity-50 disabled:cursor-not-allowed"
+                                    style={styles.submitBtn}
                                 >
-                                    <span className="relative z-10 flex items-center justify-center gap-2">
-                                        {loading ? (
-                                            <>
-                                                <Loader2 className="w-4 h-4 animate-spin" />
-                                                UPDATING...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <ShieldCheck className="w-4 h-4" />
-                                                UPDATE
-                                            </>
-                                        )}
-                                    </span>
-                                    <div className="absolute inset-0 -translate-x-full group-hover:translate-x-full transition-transform duration-700 bg-gradient-to-r from-transparent via-white/25 to-transparent"></div>
+                                    {loading ? (
+                                        <>
+                                            <Loader2 className="animate-spin" style={{ width: 16, height: 16 }} />
+                                            UPDATING...
+                                        </>
+                                    ) : (
+                                        <>
+                                            <ShieldCheck style={{ width: 16, height: 16 }} />
+                                            UPDATE
+                                        </>
+                                    )}
                                 </button>
                             </div>
-
                         </form>
-
-                    )}
-
-                </div>
+                    </>
+                )}
 
             </div>
         </div>
