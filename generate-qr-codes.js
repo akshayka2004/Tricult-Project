@@ -17,7 +17,7 @@ const ACTIVITIES = [
     { id: 'dummy', name: 'Dummy', amount: 200, duration_mins: 15 },
 ];
 
-const outputDir = resolve('hub-qr-codes');
+const outputDir = resolve('public', 'hub-qr-codes');
 
 // Ensure output directory exists
 mkdirSync(outputDir, { recursive: true });
