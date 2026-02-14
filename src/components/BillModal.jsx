@@ -1,4 +1,4 @@
-import { X, Hash, Clock, Coins, Timer, CheckCircle, User, AlertTriangle } from 'lucide-react';
+import { X, Hash, Clock, Coins, Timer, CheckCircle, User, AlertTriangle, Gamepad2 } from 'lucide-react';
 
 export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }) {
     if (!bill) return null;
@@ -65,7 +65,7 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
             fontSize: '11px',
             color: 'rgba(136, 136, 170, 0.6)',
             letterSpacing: '1px',
-            marginLeft: '32px', // Align with title text (icon width + gap)
+            marginLeft: '32px',
         },
         body: {
             padding: '24px',
@@ -152,12 +152,11 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
             flex: 1,
             padding: '16px',
             borderRadius: '12px',
-            border: 'none',
+            border: isConfirmation ? '1px solid rgba(255, 204, 0, 0.3)' : '1px solid rgba(0, 255, 255, 0.3)',
             outline: 'none',
             background: isConfirmation
                 ? 'linear-gradient(90deg, rgba(255, 204, 0, 0.1), rgba(255, 204, 0, 0.2))'
                 : 'linear-gradient(90deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.2))',
-            border: isConfirmation ? '1px solid rgba(255, 204, 0, 0.3)' : '1px solid rgba(0, 255, 255, 0.3)',
             color: isConfirmation ? '#ffcc00' : '#00ffff',
             fontFamily: "'Orbitron', sans-serif",
             fontSize: '14px',
@@ -178,7 +177,22 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
             fontWeight: 700,
             letterSpacing: '1px',
             cursor: 'pointer',
-        }
+        },
+        typeBadge: {
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '6px',
+            padding: '4px 12px',
+            borderRadius: '20px',
+            fontSize: '11px',
+            fontWeight: 700,
+            fontFamily: "'Rajdhani', sans-serif",
+            letterSpacing: '1px',
+            textTransform: 'uppercase',
+            background: bill.is_timed ? 'rgba(0, 255, 136, 0.1)' : 'rgba(255, 170, 0, 0.1)',
+            color: bill.is_timed ? '#00ff88' : '#ffaa00',
+            border: bill.is_timed ? '1px solid rgba(0, 255, 136, 0.3)' : '1px solid rgba(255, 170, 0, 0.3)',
+        },
     };
 
     return (
@@ -214,6 +228,7 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
 
                 {/* Body */}
                 <div style={styles.body}>
+                    {/* User Info */}
                     <div style={styles.userInfo}>
                         <div style={styles.avatar}>
                             <User size={24} />
@@ -224,21 +239,32 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
                         </div>
                     </div>
 
+                    {/* Activity Name */}
                     <div style={styles.row}>
                         <span style={styles.label}>
-                            <Hash size={16} color="#00ffff" /> Hub Number
+                            <Gamepad2 size={16} color="#00ffff" /> Activity
                         </span>
-                        <span style={styles.value}>#{bill.hub_number}</span>
+                        <span style={styles.value}>{bill.activity_name}</span>
                     </div>
 
-                    <div style={styles.row}>
-                        <span style={styles.label}>
-                            <Timer size={16} color="#ff00ff" /> Duration
+                    {/* Duration (only for timed activities) */}
+                    {bill.is_timed && bill.duration_mins && (
+                        <div style={styles.row}>
+                            <span style={styles.label}>
+                                <Timer size={16} color="#ff00ff" /> Duration
+                            </span>
+                            <span style={styles.value}>{bill.duration_mins} min</span>
+                        </div>
+                    )}
+
+                    {/* Type badge */}
+                    <div style={{ ...styles.row, justifyContent: 'flex-start' }}>
+                        <span style={styles.typeBadge}>
+                            {bill.is_timed ? '⏱ Timed Session' : '⚡ Instant Deduction'}
                         </span>
-                        <span style={styles.value}>{bill.duration}</span>
                     </div>
 
-                    {/* Only show timestamp if it's a receipt (or if we have one for confirmation) */}
+                    {/* Timestamp (only on receipt) */}
                     {bill.timestamp && (
                         <div style={styles.row}>
                             <span style={styles.label}>
@@ -254,6 +280,7 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
 
                     <div style={styles.divider} />
 
+                    {/* Total Tokens */}
                     <div style={styles.row}>
                         <span style={styles.totalLabel}>
                             <Coins size={18} color="#ff0055" /> TOKENS

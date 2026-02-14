@@ -2,7 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
-import { TOKEN_COST_PER_PLAY, SESSION_DURATION, SESSION_DURATION_MS, TOTAL_HUBS } from '../lib/constants';
+import { getActivityById, isTimedActivity } from '../lib/constants';
 import TransactionList from '../components/TransactionList';
 import QRScanner from '../components/QRScanner';
 import BillModal from '../components/BillModal';
@@ -39,34 +39,48 @@ export default function UserDashboard() {
         setScanError('');
 
         try {
-            // Expected format: "HUB-1", "HUB-2", etc.
-            if (!decodedText.startsWith('HUB-')) {
-                throw new Error('Invalid QR Code. Please scan a valid Game Hub QR.');
+            // Parse JSON payload from QR code
+            let qrData;
+            try {
+                qrData = JSON.parse(decodedText);
+            } catch {
+                throw new Error('Invalid QR Code. Please scan a valid activity QR.');
             }
 
-            const hubNumber = parseInt(decodedText.split('-')[1]);
-            if (isNaN(hubNumber) || hubNumber < 1 || hubNumber > TOTAL_HUBS) {
-                throw new Error('Invalid Hub Number.');
+            // Validate QR data structure
+            if (!qrData.id || !qrData.name || !qrData.amount) {
+                throw new Error('Invalid QR Code format. Missing activity details.');
             }
 
-            if (user.balance_tokens < TOKEN_COST_PER_PLAY) {
-                throw new Error(`Insufficient tokens. Need ${TOKEN_COST_PER_PLAY} TKN.`);
+            // Look up activity from constants to verify it's a known activity
+            const activity = getActivityById(qrData.id);
+            if (!activity) {
+                throw new Error(`Unknown activity: ${qrData.name}`);
             }
 
-            // Open Confirmation Modal
+            // Check user balance
+            if (user.balance_tokens < activity.amount) {
+                throw new Error(`Insufficient tokens. Need ${activity.amount} TKN, you have ${user.balance_tokens} TKN.`);
+            }
+
+            const isTimed = isTimedActivity(activity);
+
+            // Open Confirmation Modal with full activity details
             setBill({
-                hub_number: hubNumber,
+                activity_id: activity.id,
+                activity_name: activity.name,
+                amount: activity.amount,
+                duration_mins: activity.duration_mins,
+                is_timed: isTimed,
                 timestamp: null, // Pending
                 username: user.username,
                 ticket_number: user.ticket_number,
-                duration: SESSION_DURATION,
-                amount: TOKEN_COST_PER_PLAY,
             });
             setBillType('confirmation');
 
         } catch (err) {
             setScanError(err.message);
-            setTimeout(() => setScanError(''), 3000);
+            setTimeout(() => setScanError(''), 4000);
         }
     };
 
@@ -76,7 +90,7 @@ export default function UserDashboard() {
 
         try {
             const timestamp = new Date().toISOString();
-            const newBalance = user.balance_tokens - TOKEN_COST_PER_PLAY;
+            const newBalance = user.balance_tokens - bill.amount;
 
             // 1. Deduct Tokens
             const { error: updateError } = await supabase
@@ -86,33 +100,40 @@ export default function UserDashboard() {
 
             if (updateError) throw updateError;
 
-            // 2. Log Transaction
+            // 2. Log Transaction (always — both timed and instant)
+            const durationLabel = bill.is_timed ? `${bill.duration_mins} min` : null;
             const { error: txError } = await supabase
                 .from('transactions')
                 .insert({
                     user_id: user.id,
                     type: 'deduction',
-                    amount: TOKEN_COST_PER_PLAY,
-                    hub_number: bill.hub_number,
-                    duration: SESSION_DURATION,
-                    description: `Hub #${bill.hub_number} session — ${SESSION_DURATION}`,
+                    amount: bill.amount,
+                    hub_number: null,
+                    duration: durationLabel,
+                    description: bill.is_timed
+                        ? `${bill.activity_name} — ${bill.duration_mins} min session`
+                        : `${bill.activity_name}`,
                     created_at: timestamp,
                 });
 
             if (txError) throw txError;
 
-            // 3. Create active session for volunteer
-            const expiresAt = new Date(Date.now() + SESSION_DURATION_MS).toISOString();
-            await supabase.from('sessions').insert({
-                hub_number: bill.hub_number,
-                user_id: user.id,
-                username: user.username,
-                ticket_number: user.ticket_number,
-                amount: TOKEN_COST_PER_PLAY,
-                status: 'active',
-                started_at: timestamp,
-                expires_at: expiresAt,
-            });
+            // 3. Create active session ONLY for timed activities
+            if (bill.is_timed) {
+                const expiresAt = new Date(Date.now() + bill.duration_mins * 60 * 1000).toISOString();
+                await supabase.from('sessions').insert({
+                    hub_number: 0, // No longer hub-based; use 0 as placeholder
+                    activity_id: bill.activity_id,
+                    activity_name: bill.activity_name,
+                    user_id: user.id,
+                    username: user.username,
+                    ticket_number: user.ticket_number,
+                    amount: bill.amount,
+                    status: 'active',
+                    started_at: timestamp,
+                    expires_at: expiresAt,
+                });
+            }
 
             // Success
             await refreshUser();
@@ -217,18 +238,13 @@ export default function UserDashboard() {
                         <div className="transaction-header mb-5">
                             <h2>
                                 <QrCode className="w-4 h-4 inline mr-2" />
-                                HUB QR SCANNER
+                                ACTIVITY QR SCANNER
                             </h2>
                         </div>
 
                         <div className="mb-5 p-4 rounded-2xl bg-cyber-bg/60 border border-cyber-border/30">
                             <div className="flex items-center justify-between text-sm font-['Rajdhani'] font-medium">
-                                <span className="text-cyber-muted">Cost per play:</span>
-                                <span className="text-cyber-yellow font-bold">{TOKEN_COST_PER_PLAY} TKN</span>
-                            </div>
-                            <div className="flex items-center justify-between text-sm font-['Rajdhani'] font-medium mt-2">
-                                <span className="text-cyber-muted">Session duration:</span>
-                                <span className="text-cyber-cyan font-bold">{SESSION_DURATION}</span>
+                                <span className="text-cyber-muted">Scan an activity QR code to play</span>
                             </div>
                         </div>
 
