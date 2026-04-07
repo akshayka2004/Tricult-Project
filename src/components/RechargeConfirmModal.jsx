@@ -36,19 +36,19 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
     return (
         <div className={`fixed inset-0 z-[1000] flex items-center justify-center p-3 sm:p-4 bg-black/95 backdrop-blur-[12px] transition-opacity duration-300 ${isClosing ? 'opacity-0' : 'animate-fade-in'}`} onClick={handleClose}>
             <div
-                className={`relative w-full max-w-[420px] bg-gradient-to-br from-[#0f0f0f] to-[#080808] border-[1.5px] border-[#ffff00]/25 rounded-[24px] overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,0,0.1),0_0_60px_rgba(255,255,0,0.1)] transition-all duration-300 ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'animate-slide-up'}`}
+                className={`relative w-full max-w-[420px] bg-gradient-to-br from-[#0f0f0f] to-[#080808] border-[1.5px] border-[#00E5FF]/25 rounded-[24px] overflow-hidden shadow-[0_25px_80px_rgba(0,0,0,0.8),0_0_0_1px_rgba(255,255,0,0.1),0_0_60px_rgba(255,255,0,0.1)] transition-all duration-300 ${isClosing ? 'scale-95 opacity-0 translate-y-4' : 'animate-slide-up'}`}
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Top Accent Line */}
-                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#ffff00] to-[#ffcc00] opacity-80"></div>
+                <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-transparent via-[#00E5FF] to-[#B026FF] opacity-80"></div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-4 sm:px-7 pt-6 pb-5 border-b border-[#ffff00]/10">
+                <div className="flex items-center justify-between px-4 sm:px-7 pt-6 pb-5 border-b border-[#00E5FF]/10">
                     <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#ffff00]/15 to-[#ffcc00]/10 border border-[#ffff00]/30 flex items-center justify-center text-[#ffff00] shadow-[0_0_20px_rgba(255,255,0,0.15)] text-lg">
+                        <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00E5FF]/15 to-[#B026FF]/10 border border-[#00E5FF]/30 flex items-center justify-center text-[#00E5FF] shadow-[0_0_20px_rgba(255,255,0,0.15)] text-lg">
                             ⚡
                         </div>
-                        <span className="font-['Orbitron'] text-lg font-bold uppercase tracking-wider text-[#ffff00]">
+                        <span className="font-['Orbitron'] text-lg font-bold uppercase tracking-wider text-[#00E5FF]">
                             Confirm Recharge
                         </span>
                     </div>
@@ -63,13 +63,13 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                 {/* Body */}
                 <div className="px-4 sm:px-7 py-5 sm:py-7 flex flex-col gap-5 sm:gap-6">
                     {/* User Card */}
-                    <div className="flex items-center gap-4 p-5 bg-gradient-to-br from-[#ffff00]/5 to-[#ffcc00]/[0.03] border border-[#ffff00]/15 rounded-2xl relative overflow-hidden">
-                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#ffff00] to-[#ffcc00]"></div>
-                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#ffff00]/20 to-[#ffcc00]/10 border-2 border-[#ffff00]/30 flex items-center justify-center text-2xl shadow-[0_4px_15px_rgba(255,255,0,0.1)] flex-shrink-0 text-[#ffff00]">
+                    <div className="flex items-center gap-4 p-5 bg-gradient-to-br from-[#00E5FF]/5 to-[#B026FF]/[0.03] border border-[#00E5FF]/15 rounded-2xl relative overflow-hidden">
+                        <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-[#00E5FF] to-[#B026FF]"></div>
+                        <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#00E5FF]/20 to-[#B026FF]/10 border-2 border-[#00E5FF]/30 flex items-center justify-center text-2xl shadow-[0_4px_15px_rgba(255,255,0,0.1)] flex-shrink-0 text-[#00E5FF]">
                             <User className="w-7 h-7" />
                         </div>
                         <div className="min-w-0 flex-1">
-                            <div className="font-['Orbitron'] text-lg font-bold text-[#ffff00] truncate mb-1">
+                            <div className="font-['Orbitron'] text-lg font-bold text-[#00E5FF] truncate mb-1">
                                 {data.username}
                             </div>
                             <div className="font-['Share_Tech_Mono'] text-sm text-[#888844] flex items-center gap-1.5">
@@ -84,7 +84,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                         <div className="text-[11px] font-bold tracking-[2px] uppercase text-[#666] mb-2">
                             Current Balance
                         </div>
-                        <div className="font-['Orbitron'] text-3xl font-extrabold text-[#ffff00] drop-shadow-[0_0_20px_rgba(255,255,0,0.3)]">
+                        <div className="font-['Orbitron'] text-3xl font-extrabold text-[#00E5FF] drop-shadow-[0_0_20px_rgba(255,255,0,0.3)]">
                             {currentBalance}
                             <span className="text-sm font-sans font-normal text-[#884] ml-1">TKN</span>
                         </div>
@@ -99,7 +99,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                             <span className="absolute left-5 font-['Orbitron'] text-2xl font-bold text-[#884] pointer-events-none">+</span>
                             <input
                                 type="number"
-                                className="w-full py-5 pl-12 pr-6 bg-black/80 border-2 border-[#ffff00]/20 rounded-2xl font-['Orbitron'] text-3xl font-bold text-[#ffff00] text-center outline-none transition-all duration-300 focus:border-[#ffff00]/50 focus:bg-black/95 focus:shadow-[0_0_0_4px_rgba(255,255,0,0.1),0_0_30px_rgba(255,255,0,0.15)] placeholder:text-[#333]"
+                                className="w-full py-5 pl-12 pr-6 bg-black/80 border-2 border-[#00E5FF]/20 rounded-2xl font-['Orbitron'] text-3xl font-bold text-[#00E5FF] text-center outline-none transition-all duration-300 focus:border-[#00E5FF]/50 focus:bg-black/95 focus:shadow-[0_0_0_4px_rgba(255,255,0,0.1),0_0_30px_rgba(255,255,0,0.15)] placeholder:text-[#333]"
                                 value={amount}
                                 onChange={handleAmountChange}
                             />
@@ -111,8 +111,8 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                                 <button
                                     key={val}
                                     className={`py-3 px-2 rounded-xl border font-['Rajdhani'] text-sm font-semibold transition-all duration-200 ${amount === val
-                                        ? 'bg-[#ffff00]/20 border-[#ffff00] text-[#ffff00] shadow-[0_4px_15px_rgba(255,255,0,0.2)]'
-                                        : 'bg-[#ffff00]/5 border-[#ffff00]/15 text-[#884] hover:bg-[#ffff00]/10 hover:border-[#ffff00]/30 hover:text-[#ffff00] hover:-translate-y-0.5'
+                                        ? 'bg-[#00E5FF]/20 border-[#00E5FF] text-[#00E5FF] shadow-[0_4px_15px_rgba(255,255,0,0.2)]'
+                                        : 'bg-[#00E5FF]/5 border-[#00E5FF]/15 text-[#884] hover:bg-[#00E5FF]/10 hover:border-[#00E5FF]/30 hover:text-[#00E5FF] hover:-translate-y-0.5'
                                         }`}
                                     onClick={() => handleQuickAmount(val)}
                                 >
@@ -123,7 +123,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                     </div>
 
                     {/* Summary */}
-                    <div className="p-5 bg-black/60 rounded-2xl border border-[#ffff00]/10 flex flex-col gap-3">
+                    <div className="p-5 bg-black/60 rounded-2xl border border-[#00E5FF]/10 flex flex-col gap-3">
                         <div className="flex justify-between items-center text-[15px]">
                             <span className="text-[#666] font-medium">Current</span>
                             <span className="font-['Orbitron'] font-semibold text-[#e0e0e0]">{currentBalance} TKN</span>
@@ -132,10 +132,10 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                             <span className="text-[#666] font-medium">Add</span>
                             <span className="font-['Orbitron'] font-semibold text-[#ccff00]">+{amount} TKN</span>
                         </div>
-                        <div className="h-px bg-gradient-to-r from-transparent via-[#ffff00]/20 to-transparent my-1"></div>
+                        <div className="h-px bg-gradient-to-r from-transparent via-[#00E5FF]/20 to-transparent my-1"></div>
                         <div className="flex justify-between items-center pt-1">
-                            <span className="font-['Orbitron'] text-sm font-bold tracking-wider text-[#ffff00] uppercase">New Total</span>
-                            <span className="font-['Orbitron'] text-2xl font-extrabold text-[#ffff00] drop-shadow-[0_0_15px_rgba(255,255,0,0.4)]">
+                            <span className="font-['Orbitron'] text-sm font-bold tracking-wider text-[#00E5FF] uppercase">New Total</span>
+                            <span className="font-['Orbitron'] text-2xl font-extrabold text-[#00E5FF] drop-shadow-[0_0_15px_rgba(255,255,0,0.4)]">
                                 {newBalance} TKN
                             </span>
                         </div>
@@ -153,7 +153,7 @@ export default function RechargeConfirmModal({ data, onConfirm, onCancel, loadin
                     <button
                         onClick={handleConfirm}
                         disabled={loading}
-                        className="flex-1 py-4 rounded-xl bg-gradient-to-r from-[#ffff00] to-[#ffcc00] text-black font-['Orbitron'] text-[13px] font-bold tracking-wider uppercase shadow-[0_4px_20px_rgba(255,255,0,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,255,0,0.5)] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
+                        className="flex-1 py-4 rounded-xl bg-gradient-to-r from-[#00E5FF] to-[#B026FF] text-black font-['Orbitron'] text-[13px] font-bold tracking-wider uppercase shadow-[0_4px_20px_rgba(255,255,0,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:shadow-[0_8px_30px_rgba(255,255,0,0.5)] active:translate-y-0 disabled:opacity-50 disabled:cursor-not-allowed relative overflow-hidden group"
                     >
                         <span className="relative z-10 flex items-center justify-center gap-2">
                             {loading ? (

@@ -15,17 +15,15 @@ export default function ProtectedRoute({ children, requireAdmin = false, require
     }
 
     if (!user) {
-        if (requireAdmin) return <Navigate to="/admin-portal-secure" replace />;
-        if (requireVolunteer) return <Navigate to="/volunteer" replace />;
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/" replace />;
     }
 
     if (requireAdmin && !isAdmin) {
-        return <Navigate to="/login" replace />;
+        return <Navigate to="/" replace />;
     }
 
     if (requireVolunteer && !isVolunteer) {
-        return <Navigate to="/volunteer" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return children;

@@ -41,7 +41,7 @@
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, transparent, #ffff00, #ffcc00, transparent);
+    background: linear-gradient(90deg, transparent, var(--color-cyber-cyan), var(--color-cyber-magenta), transparent);
     opacity: 0.8;
 }
 
@@ -63,7 +63,7 @@
     font-weight: 700;
     letter-spacing: 2px;
     text-transform: uppercase;
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
 }
 
 .recharge-modal-title .icon {
@@ -129,7 +129,7 @@
     top: 0;
     bottom: 0;
     width: 4px;
-    background: linear-gradient(180deg, #ffff00, #ffcc00);
+    background: linear-gradient(180deg, var(--color-cyber-cyan), var(--color-cyber-magenta));
 }
 
 .recharge-user-avatar {
@@ -155,7 +155,7 @@
     font-family: 'Orbitron', sans-serif;
     font-size: 1.125rem;
     font-weight: 700;
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
     margin-bottom: 4px;
     white-space: nowrap;
     overflow: hidden;
@@ -198,7 +198,7 @@
     font-family: 'Orbitron', sans-serif;
     font-size: 2rem;
     font-weight: 800;
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
     text-shadow: 0 0 20px rgba(255, 255, 0, 0.3);
 }
 
@@ -237,7 +237,7 @@
     background: rgba(10, 10, 10, 0.8);
     border: 2px solid rgba(255, 255, 0, 0.2);
     border-radius: 16px;
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
     font-family: 'Orbitron', sans-serif;
     font-size: 2rem;
     font-weight: 700;
@@ -291,14 +291,14 @@
 .quick-amount-btn:hover {
     background: rgba(255, 255, 0, 0.1);
     border-color: rgba(255, 255, 0, 0.3);
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
     transform: translateY(-2px);
 }
 
 .quick-amount-btn.active {
     background: rgba(255, 255, 0, 0.2);
-    border-color: #ffff00;
-    color: #ffff00;
+    border-color: var(--color-cyber-cyan);
+    color: var(--color-cyber-cyan);
     box-shadow: 0 4px 15px rgba(255, 255, 0, 0.2);
 }
 
@@ -354,14 +354,14 @@
     font-weight: 700;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
 }
 
 .recharge-total-value {
     font-family: 'Orbitron', sans-serif;
     font-size: 1.5rem;
     font-weight: 800;
-    color: #ffff00;
+    color: var(--color-cyber-cyan);
     text-shadow: 0 0 15px rgba(255, 255, 0, 0.4);
 }
 
@@ -405,7 +405,7 @@
 }
 
 .recharge-btn-confirm {
-    background: linear-gradient(135deg, #ffff00, #ffcc00);
+    background: linear-gradient(135deg, var(--color-cyber-cyan), var(--color-cyber-magenta));
     color: #000000;
     box-shadow: 0 4px 20px rgba(255, 255, 0, 0.3);
     position: relative;

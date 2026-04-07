@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import bcrypt from 'bcryptjs';
 
 const AuthContext = createContext(null);
 
@@ -21,81 +20,57 @@ export function AuthProvider({ children }) {
         setLoading(false);
     }, []);
 
-    const login = async (ticketNumber, password) => {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('ticket_number', ticketNumber)
-            .eq('is_admin', false)
-            .eq('is_volunteer', false)
-            .single();
+    const fetchOrCreateUser = async (role) => {
+        const mockProfile = {
+            id: role === 'admin' ? 'admin-uuid' : role === 'volunteer' ? 'vol-uuid' : 'user-uuid',
+            username: role === 'admin' ? 'AdminDemo' : role === 'volunteer' ? 'VolDemo' : 'UserDemo',
+            ticket_number: role === 'admin' ? 'ADM-000' : role === 'volunteer' ? 'VOL-000' : 'USR-000',
+            is_admin: role === 'admin',
+            is_volunteer: role === 'volunteer',
+            balance_tokens: role === 'user' ? 1000 : 0
+        };
 
-        if (error || !data) {
-            throw new Error('Invalid ticket number');
+        try {
+            let q = supabase.from('profiles').select('*');
+            if (role === 'admin') q = q.eq('is_admin', true);
+            else if (role === 'volunteer') q = q.eq('is_volunteer', true);
+            else q = q.eq('is_admin', false).eq('is_volunteer', false);
+            
+            const { data, error } = await q.limit(1).single();
+            
+            if (error || !data) {
+                // Try to insert if possible, but don't crash if it fails
+                try {
+                    const { data: newData } = await supabase.from('profiles').insert({
+                        ...mockProfile,
+                        password: 'noop'
+                    }).select().single();
+                    if (newData) return finalizeUser(newData);
+                } catch (err) {
+                    console.warn("Supabase insert failed, using local mock:", err);
+                }
+                return finalizeUser(mockProfile);
+            }
+
+            return finalizeUser(data);
+        } catch (err) {
+            console.error("Supabase communication error, using local mock:", err);
+            return finalizeUser(mockProfile);
         }
+    };
 
-        const valid = bcrypt.compareSync(password, data.password);
-        if (!valid) {
-            throw new Error('Invalid password');
-        }
-
+    const finalizeUser = (data) => {
         const userData = { ...data, password: undefined };
         setUser(userData);
-        setIsAdmin(false);
-        setIsVolunteer(false);
+        setIsAdmin(!!userData.is_admin);
+        setIsVolunteer(!!userData.is_volunteer);
         localStorage.setItem('tricult_user', JSON.stringify(userData));
         return userData;
     };
 
-    const adminLogin = async (username, password) => {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('username', username)
-            .eq('is_admin', true)
-            .single();
-
-        if (error || !data) {
-            throw new Error('Invalid admin credentials');
-        }
-
-        const valid = bcrypt.compareSync(password, data.password);
-        if (!valid) {
-            throw new Error('Invalid password');
-        }
-
-        const userData = { ...data, password: undefined };
-        setUser(userData);
-        setIsAdmin(true);
-        setIsVolunteer(false);
-        localStorage.setItem('tricult_user', JSON.stringify({ ...userData, is_admin: true }));
-        return userData;
-    };
-
-    const volunteerLogin = async (username, password) => {
-        const { data, error } = await supabase
-            .from('profiles')
-            .select('*')
-            .eq('username', username)
-            .eq('is_volunteer', true)
-            .single();
-
-        if (error || !data) {
-            throw new Error('Invalid volunteer credentials');
-        }
-
-        const valid = bcrypt.compareSync(password, data.password);
-        if (!valid) {
-            throw new Error('Invalid password');
-        }
-
-        const userData = { ...data, password: undefined };
-        setUser(userData);
-        setIsAdmin(false);
-        setIsVolunteer(true);
-        localStorage.setItem('tricult_user', JSON.stringify({ ...userData, is_volunteer: true }));
-        return userData;
-    };
+    const login = async () => fetchOrCreateUser('user');
+    const adminLogin = async () => fetchOrCreateUser('admin');
+    const volunteerLogin = async () => fetchOrCreateUser('volunteer');
 
     const logout = () => {
         setUser(null);

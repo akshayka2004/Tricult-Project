@@ -56,9 +56,9 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
             fontFamily: "'Orbitron', sans-serif",
             fontSize: '18px',
             fontWeight: 700,
-            color: isConfirmation ? '#ffcc00' : '#00ffff',
+            color: isConfirmation ? '#00ffff' : '#00ffff',
             letterSpacing: '1px',
-            textShadow: isConfirmation ? '0 0 10px rgba(255, 204, 0, 0.3)' : '0 0 10px rgba(0, 255, 255, 0.3)',
+            textShadow: '0 0 10px rgba(0, 229, 255, 0.3)',
         },
         subtitle: {
             fontFamily: "'Share_Tech_Mono', monospace",
@@ -152,18 +152,16 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
             flex: 1,
             padding: '16px',
             borderRadius: '12px',
-            border: isConfirmation ? '1px solid rgba(255, 204, 0, 0.3)' : '1px solid rgba(0, 255, 255, 0.3)',
+            border: '1px solid rgba(0, 229, 255, 0.3)',
             outline: 'none',
-            background: isConfirmation
-                ? 'linear-gradient(90deg, rgba(255, 204, 0, 0.1), rgba(255, 204, 0, 0.2))'
-                : 'linear-gradient(90deg, rgba(0, 255, 255, 0.1), rgba(0, 255, 255, 0.2))',
-            color: isConfirmation ? '#ffcc00' : '#00ffff',
+            background: 'linear-gradient(90deg, rgba(0, 229, 255, 0.1), rgba(0, 229, 255, 0.2))',
+            color: '#00ffff',
             fontFamily: "'Orbitron', sans-serif",
             fontSize: '14px',
             fontWeight: 700,
             letterSpacing: '1px',
             cursor: 'pointer',
-            boxShadow: isConfirmation ? '0 0 15px rgba(255, 204, 0, 0.1)' : '0 0 15px rgba(0, 255, 255, 0.1)',
+            boxShadow: '0 0 15px rgba(0, 229, 255, 0.1)',
         },
         btnSecondary: {
             flex: 1,
@@ -213,7 +211,7 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
                     </button>
                     <div style={styles.titleRow}>
                         {isConfirmation ? (
-                            <AlertTriangle size={20} color="#ffcc00" />
+                            <AlertTriangle size={20} color="#00ffff" />
                         ) : (
                             <CheckCircle size={20} color="#00ffff" />
                         )}
@@ -268,7 +266,7 @@ export default function BillModal({ bill, onClose, onConfirm, type = 'receipt' }
                     {bill.timestamp && (
                         <div style={styles.row}>
                             <span style={styles.label}>
-                                <Clock size={16} color="#ffff00" /> Timestamp
+                                <Clock size={16} color="#00E5FF" /> Timestamp
                             </span>
                             <span style={{ ...styles.value, fontFamily: "'Share_Tech_Mono', monospace", fontSize: '13px' }}>
                                 {new Date(bill.timestamp).toLocaleString('en-IN', {

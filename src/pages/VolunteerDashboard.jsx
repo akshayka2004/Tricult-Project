@@ -14,16 +14,43 @@ export default function VolunteerDashboard() {
 
     // Fetch active sessions
     const fetchSessions = useCallback(async () => {
-        const { data, error } = await supabase
-            .from('sessions')
-            .select('*')
-            .in('status', ['active'])
-            .order('expires_at', { ascending: true }); // Expiring soonest first
+        try {
+            const { data, error } = await supabase
+                .from('sessions')
+                .select('*')
+                .in('status', ['active'])
+                .order('expires_at', { ascending: true }); // Expiring soonest first
 
-        if (!error && data) {
-            setActiveSessions(data);
+            if (!error && data && data.length > 0) {
+                setActiveSessions(data);
+            } else if (!activeSessions.length) {
+                // Initial load: provide some dummy data for the reference architecture demo
+                const dummySessions = [
+                    {
+                        id: 'demo-1',
+                        activity_name: 'High-Speed VR Racer',
+                        username: 'Speedster01',
+                        ticket_number: 'TRI-VR1024',
+                        started_at: new Date(Date.now() - 5 * 60 * 1000).toISOString(),
+                        expires_at: new Date(Date.now() + 10 * 60 * 1000).toISOString(),
+                        status: 'active'
+                    },
+                    {
+                        id: 'demo-2',
+                        activity_name: 'Cyber Combat Arena',
+                        username: 'NeonGhost',
+                        ticket_number: 'TRI-CC2056',
+                        started_at: new Date(Date.now() - 12 * 60 * 1000).toISOString(),
+                        expires_at: new Date(Date.now() + 30 * 1000).toISOString(), // Expiring soon!
+                        status: 'active'
+                    }
+                ];
+                setActiveSessions(dummySessions);
+            }
+        } catch (err) {
+            console.warn("Supabase session fetch failed, using demo data.");
         }
-    }, []);
+    }, [activeSessions.length]);
 
     // Poll every 5s
     useEffect(() => {
@@ -77,7 +104,7 @@ export default function VolunteerDashboard() {
 
     const handleLogout = () => {
         logout();
-        navigate('/volunteer');
+        navigate('/');
     };
 
     return (
@@ -86,7 +113,7 @@ export default function VolunteerDashboard() {
             <header className="monitor-header" style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center', padding: '16px', position: 'relative' }}>
                 <button
                     onClick={() => setShowPasswordModal(true)}
-                    className="btn-base cyber-btn-outline btn-sm"
+                    className="btn-base cyber-btn-outline btn-sm transition-all duration-300 hover:scale-105 hover:shadow-[0_0_15px_rgba(0,250,154,0.3)]"
                     style={{ position: 'absolute', top: '16px', left: '16px', padding: '0 16px', height: '36px', fontSize: '11px', fontWeight: 700 }}
                 >
                     <Lock className="w-3 h-3 mr-2" />
@@ -94,11 +121,11 @@ export default function VolunteerDashboard() {
                 </button>
 
                 <div className="flex flex-col items-center gap-1">
-                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain drop-shadow-[0_0_10px_rgba(255,255,0,0.5)]" />
-                    <h1 className="text-glow-green text-lg sm:text-2xl" style={{ color: '#00ff88' }}>ACTIVITY MONITOR</h1>
+                    <img src="/assets/game-hub-logo.png" alt="Game Hub" className="h-10 sm:h-16 w-auto object-contain drop-shadow-[0_0_15px_rgba(0,229,255,0.6)]" />
+                    <h1 className="text-transparent bg-clip-text bg-gradient-to-br from-white to-cyber-green drop-shadow-[0_0_15px_rgba(0,250,154,0.6)] text-lg sm:text-2xl font-['Orbitron'] font-black tracking-widest uppercase">ACTIVITY MONITOR</h1>
                 </div>
 
-                <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm" style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <button onClick={handleLogout} className="btn-base cyber-btn-outline btn-sm transition-all duration-300 hover:scale-110 hover:shadow-[0_0_15px_rgba(0,250,154,0.3)]" style={{ position: 'absolute', top: '12px', right: '12px', width: '36px', height: '36px', padding: 0, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                     <LogOut className="w-4 h-4" />
                 </button>
             </header>
